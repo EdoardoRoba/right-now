@@ -98,6 +98,13 @@ Measured with headless Chromium (software rendering, 4 vCPU container, 1280×880
 
 **Memory (soak test)**: headless Chromium ran `?demo=1&dots=1400` with the store at its 1,500-dot cap and new events arriving every 1–3 s. Heap after forced GC, sampled once a minute for 10 minutes: 10.0 MB every time, with no growth.
 
+**Memory on the live site (30 min, 2026-10-23)**: the production Earthquakes page with real USGS data was sampled every 5 minutes after a forced GC (`--enable-precise-memory-info`).
+
+- Heap went from 1.07 MB to 1.14 MB (+70 KB over 30 min).
+- The DOM held 156 nodes the whole time.
+- It kept refreshing ("Updated 0–58 s ago").
+- No leak.
+
 - Caveat: Chromium's `performance.memory` is coarse (bucketed) without `--enable-precise-memory-info`, so this rules out a real leak but not drift under about 1 MB.
 - Still to do: a 30-minute DevTools check on the deployed site.
 
@@ -175,6 +182,30 @@ Measured with headless Chromium (software rendering, 4 vCPU container, 1280×880
 - **The CISA fallback is real**: `www.cisa.gov` was blocked in the dev sandbox, so the local run under workerd fell back to the official GitHub mirror. It fetched catalog 2026.10.21, newest entry CVE-2026-106931 (EG Secure Solutions SiteGuard Server Edition).
 - **Bug caught by running under workerd**: a Worker entry module may only export handlers. Exporting the cron constants made the runtime refuse to start; they now live in `crons.ts`, and a test checks the entry only exports `default`.
 - **Demo mode** uses generic product names ("Example VPN Gateway") and `DEMO-2026-xxxxx` ids only.
+
+## Wikipedia tuning against a real recording (2026-10-23)
+
+Measured on 46 minutes of the live stream (10,085 Wikipedia article edits, 3.6/s, 36% bots), Friday morning UTC:
+
+| Threshold                            | Surges found             |
+| ------------------------------------ | ------------------------ |
+| ≥ 15 edits by ≥ 5 people (brief)     | 0                        |
+| ≥ 10 by ≥ 4, ≥ 10 by ≥ 3, ≥ 8 by ≥ 3 | 0                        |
+| ≥ 6 by ≥ 3                           | 1 (fr: Jean-Paul Huchon) |
+
+- **Kept the brief's surge thresholds.** A surge should mean breaking news. Lowering them would call routine editing a "surge", against the honesty rules. Quiet hours are expected to have none.
+- **"Most edited" fallback lowered from ≥ 3 to ≥ 2 edits by ≥ 2 people.**
+  - Cold-start wait until it appears: median 164 s / max 399 s at 3 edits, versus **median 49 s / max 142 s** at 2.
+  - The counts are always shown, so it stays honest.
+  - The 2-edit lead needed to replace the current hero keeps it stable: 5 changes in 46 min.
+- The recording is kept out of the repo (about 3 MB). The committed 10-minute fixture covers the tests.
+
+## Live verification of v1.2 (2026-10-23)
+
+- **Worker live** 40 s after merging PR #3. The first `/api/exploited` request warmed the jobs; real data arrived within about 2 minutes.
+- **NVD via the deployed Worker**: 79 CVEs from the first 4-hour catch-up window (6 critical). Scores came from CVSS 3.1 and 4.0.
+- **KEV**: catalog 2026.10.21 with 30 entries. The Pulse showed the newest one (Siemens Software Center, CVE-2026-110936) while its score was still being looked up.
+- **NVD_API_KEY** is set as an encrypted Worker secret (Production). With a key, the Worker now looks up 5 KEV scores per run instead of 2.
 
 ## Tooling upgrade (2026-10-23)
 
