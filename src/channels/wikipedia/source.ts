@@ -15,6 +15,9 @@ export const STREAM_URL = 'https://stream.wikimedia.org/v2/stream/recentchange';
 export const MAX_DRAWN_PER_SEC = 30;
 /** Edits whose size change is at least this big get a label in the river. */
 export const BIG_EDIT_BYTES = 4000;
+/** "Most edited" fallback hero, shown while no surge is in progress. */
+export const BUSIEST_MIN_EDITS = 2;
+export const BUSIEST_MIN_EDITORS = 2;
 /** How far back to resume after a disconnect (bounded so a replay can't flood the page). */
 export const MAX_RESUME_MS = 30_000;
 const LOG_CAP = 4.2; // log10 of ~16 kB: the river's full height
@@ -206,14 +209,15 @@ export class WikipediaRuntime {
    * take over, so the Pulse doesn't flicker between near-ties.
    */
   busiest(): LiveEvent | undefined {
-    const top = this.detector.top();
+    // ≥ 2 edits by ≥ 2 people: shows up within ~1 min of opening the page (measured).
+    const top = this.detector.top(BUSIEST_MIN_EDITS, BUSIEST_MIN_EDITORS);
     if (!top) return (this.busy = undefined);
     let key = top.key;
     let stats: { edits: number; editors: number; last: number } = top;
     const currentKey = this.busy ? String(this.busy.meta.key) : undefined;
     if (currentKey && currentKey !== top.key) {
       const cur = this.detector.stats(currentKey);
-      if (cur.edits >= 3 && top.edits < cur.edits + 2) {
+      if (cur.edits >= BUSIEST_MIN_EDITS && top.edits < cur.edits + 2) {
         key = currentKey;
         stats = cur;
       }
