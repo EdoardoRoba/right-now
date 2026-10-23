@@ -1,0 +1,616 @@
+/* ==========================================================================
+   Components — brand, pills, status, pulse, side list, river, ticker, dialog.
+   ========================================================================== */
+
+/* ---- Brand ---- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+.brand:hover {
+  color: var(--text);
+}
+
+.live-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-strong);
+  box-shadow: 0 0 12px var(--c-strong);
+}
+
+/* ---- Channel pills ---- */
+.channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font: 500 14px var(--font-display);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+  /* 36px visual, 44px touch target */
+  position: relative;
+}
+.pill::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+.pill:hover {
+  color: var(--text);
+  border-color: var(--faint);
+}
+.pill[aria-current='page'] {
+  border-color: transparent;
+  background: var(--c-mid);
+  color: var(--bg);
+}
+
+.pill__soon {
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--c-mid);
+}
+.pill[aria-current='page'] .pill__soon {
+  color: var(--bg);
+}
+
+/* ---- Header status: freshness, demo badge, clock ---- */
+.clock {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.freshness {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.chip--delayed {
+  border-color: var(--c-mid);
+  color: var(--c-mid);
+}
+
+.chip--demo {
+  border-color: var(--c-small);
+  color: var(--c-small);
+}
+
+/* ---- Pulse (the hero) ---- */
+.pulse {
+  position: relative;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pulse__rings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pulse__ring {
+  position: absolute;
+  left: 130px;
+  top: 52%;
+  width: 300px;
+  height: 300px;
+  margin: -150px 0 0 -150px;
+  border-radius: 50%;
+  border: 2px solid var(--hero-color, var(--dim));
+  opacity: 0;
+}
+
+.pulse__kicker {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--faint);
+  letter-spacing: 0.1em;
+}
+
+.pulse__ago {
+  color: var(--c-mid);
+  font-variant-numeric: tabular-nums;
+}
+
+.pulse__stage {
+  position: relative;
+}
+
+.pulse__hero {
+  position: relative;
+}
+
+/* The outgoing hero is lifted out of flow while it blurs away. */
+.pulse__hero--out {
+  position: absolute;
+  inset: 0 0 auto 0;
+  pointer-events: none;
+}
+
+.pulse__number {
+  display: block;
+  font-size: 168px;
+  line-height: 0.9;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  color: var(--hero-color, var(--dim));
+  font-variant-numeric: tabular-nums;
+}
+
+.pulse__title {
+  margin-top: 10px;
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.pulse__subtitle {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.pulse__empty {
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 24px 0;
+}
+
+/* Magnitude / score bar */
+.pulse__bar {
+  position: relative;
+  margin-top: 24px;
+  max-width: 480px;
+}
+
+.pulse__track {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+}
+
+.pulse__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  border-radius: 3px;
+  background: var(--hero-color, var(--dim));
+  box-shadow: 0 0 14px var(--hero-color, var(--dim));
+  transition:
+    width var(--dur-hero-in) var(--ease-out-expo),
+    background 0.4s;
+}
+
+.pulse__scale {
+  position: relative;
+  height: 14px;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+}
+.pulse__scale span {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.pulse__scale span:first-child {
+  transform: none;
+}
+.pulse__scale span:last-child {
+  transform: translateX(-100%);
+}
+
+.pulse__footer {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 14px;
+}
+
+.pulse__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* Calm, clearly visible notice (e.g. tsunami information). Never red. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--c-small);
+  color: var(--c-small);
+  font-size: 13px;
+}
+a.tag:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* ---- Side column: stats + earlier events ---- */
+.side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stats {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 18px;
+}
+
+.stat__label {
+  font-size: 11px;
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.stat__value {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.side__title {
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--faint);
+  letter-spacing: 0.1em;
+}
+
+.side__item {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--text);
+  transition: opacity 0.6s;
+}
+.side__item:hover {
+  color: var(--text);
+  background: linear-gradient(90deg, transparent, var(--line-soft), transparent);
+}
+
+.side__value {
+  font-size: 19px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.side__name {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side__ago {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.side__empty {
+  padding: 10px 0;
+  font-size: 14px;
+  color: var(--faint);
+}
+
+/* ---- River ---- */
+.river {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 200px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.river__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.river__grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed var(--line);
+  pointer-events: none;
+}
+
+.river__axis {
+  position: absolute;
+  left: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+  pointer-events: none;
+}
+.river__axis--top {
+  top: 8px;
+}
+.river__axis--bottom {
+  bottom: 8px;
+}
+
+.river__now {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 2px;
+  background: var(--c-mid);
+  box-shadow: 0 0 16px var(--c-mid);
+  pointer-events: none;
+}
+
+.river__now-label {
+  position: absolute;
+  top: -24px;
+  right: -14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--c-mid);
+}
+
+.river__ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+}
+.river__ticks span:last-child {
+  color: var(--c-mid);
+}
+.river__ticks--mobile {
+  display: none;
+}
+
+/* Tooltip card on hover / tap */
+.tooltip {
+  position: absolute;
+  z-index: 5;
+  min-width: 180px;
+  max-width: 280px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(7, 8, 12, 0.94);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.tooltip[hidden] {
+  display: none;
+}
+.tooltip__value {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+.tooltip__time {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--faint);
+}
+.tooltip__link {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* ---- Coming soon state ---- */
+.soon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  max-width: 640px;
+}
+.soon__title {
+  font-size: clamp(48px, 9vw, 112px);
+  line-height: 0.95;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+.soon__text {
+  font-size: 20px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+.soon__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+/* ---- Ticker (bottom marquee) ---- */
+.ticker {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: 14px 0;
+}
+
+.ticker__track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  color: var(--faint);
+}
+
+.ticker__group {
+  padding-right: 48px;
+}
+
+.ticker__sep {
+  color: var(--c-mid);
+}
+
+.sources-btn {
+  flex: 0 0 auto;
+  min-height: 44px;
+  margin: 0 var(--gutter) 0 16px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+.sources-btn:hover {
+  color: var(--c-mid);
+}
+
+/* ---- Sources dialog ---- */
+.dialog {
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+.dialog::backdrop {
+  background: rgba(7, 8, 12, 0.7);
+  backdrop-filter: blur(4px);
+}
+.dialog h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.dialog h3 {
+  margin-top: 16px;
+  font-weight: 500;
+}
+.dialog p {
+  color: var(--text-2);
+  font-size: 15px;
+  margin-top: 6px;
+}
+.dialog__notice {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--c-mid) !important;
+}
+.dialog__close {
+  margin-top: 20px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+}
+.dialog__close:hover {
+  border-color: var(--faint);
+}
+
+/* ---- Phones ---- */
+@media (max-width: 640px) {
+  .pulse {
+    min-height: 0;
+  }
+  .pulse__ring {
+    left: 90px;
+  }
+  .pulse__number {
+    font-size: clamp(88px, 22vw, 168px);
+  }
+  .pulse__title {
+    font-size: 24px;
+  }
+  /* Only the 3 most recent earlier events. */
+  .side__list li:nth-child(n + 4) {
+    display: none;
+  }
+  .river {
+    flex: 0 0 260px;
+    min-height: 260px;
+  }
+  .river__ticks--desktop {
+    display: none;
+  }
+  .river__ticks--mobile {
+    display: flex;
+  }
+  .freshness {
+    font-size: 11px;
+  }
+}
