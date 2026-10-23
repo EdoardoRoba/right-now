@@ -20,6 +20,7 @@ export class Pulse {
   private heroKey = '';
   private stage: HTMLElement;
   private ago: HTMLElement;
+  private kicker: HTMLElement;
   private rings: HTMLElement[];
   private fill: HTMLElement | null = null;
   private footer: HTMLElement;
@@ -36,10 +37,12 @@ export class Pulse {
     this.ago = el('span', { class: 'pulse__ago' }, '—');
     this.stage = el('div', { class: 'pulse__stage' });
     this.footer = el('div', { class: 'pulse__footer' });
+    this.kicker = el('span', {}, typeof config.kicker === 'string' ? config.kicker : '');
+    if (config.layout === 'inline') root.classList.add('pulse--inline');
 
     const parts: Node[] = [
       el('div', { class: 'pulse__rings', 'aria-hidden': 'true' }, ...this.rings),
-      el('p', { class: 'pulse__kicker' }, `${config.kicker} · `, this.ago),
+      el('p', { class: 'pulse__kicker' }, this.kicker, ' · ', this.ago),
       this.stage,
     ];
     if (config.bar) {
@@ -54,6 +57,7 @@ export class Pulse {
         el('div', { class: 'pulse__bar' }, el('div', { class: 'pulse__track' }, this.fill), scale),
       );
     }
+    if (config.note) parts.push(el('p', { class: 'pulse__note' }, config.note));
     parts.push(this.footer);
     root.replaceChildren(...parts);
     this.showEmpty();
@@ -103,8 +107,12 @@ export class Pulse {
       'div',
       { class: 'pulse__hero pulse__hero--in' },
       el('p', { class: 'pulse__number' }, c.value(ev)),
-      el('h2', { class: 'pulse__title' }, ev.title),
-      el('p', { class: 'pulse__subtitle' }, c.subtitle(ev)),
+      el(
+        'div',
+        { class: 'pulse__text' },
+        el('h2', { class: 'pulse__title' }, ev.title),
+        el('p', { class: 'pulse__subtitle' }, c.subtitle(ev)),
+      ),
     );
   }
 
@@ -134,6 +142,7 @@ export class Pulse {
 
   private applyMeta(ev: LiveEvent): void {
     this.root.style.setProperty('--hero-color', ev.color);
+    if (typeof this.config.kicker === 'function') this.kicker.textContent = this.config.kicker(ev);
     if (this.fill && this.config.bar) this.fill.style.width = `${this.config.bar.pct(ev)}%`;
     const tags = this.config.tags?.(ev) ?? [];
     this.footer.replaceChildren(
@@ -150,6 +159,8 @@ export class Pulse {
 
   private showEmpty(): void {
     this.stage.replaceChildren(el('p', { class: 'pulse__empty' }, this.config.emptyText));
+    if (typeof this.config.kicker === 'function')
+      this.kicker.textContent = this.config.emptyKicker ?? '';
     this.root.style.removeProperty('--hero-color');
     if (this.fill) this.fill.style.width = '0%';
     this.footer.replaceChildren();

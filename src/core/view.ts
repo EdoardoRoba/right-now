@@ -76,6 +76,9 @@ export function mountChannelView(
     if (state === 'delayed') {
       f.className = 'chip chip--delayed';
       f.textContent = 'Data delayed — source unreachable';
+    } else if (state === 'reconnecting') {
+      f.className = 'chip chip--delayed';
+      f.textContent = 'Reconnecting…';
     } else {
       f.className = 'freshness';
       f.textContent =

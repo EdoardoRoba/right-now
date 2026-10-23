@@ -31,6 +31,8 @@ export interface LiveEvent {
   label?: string;
   /** The short value part of the label, drawn in mono and in the dot colour. */
   labelValue?: string;
+  /** Label this dot in the river even though it isn't important (e.g. a huge edit). */
+  showLabel?: boolean;
   /** Link to the official source page for this event. */
   url?: string;
   meta: Record<string, string | number | boolean>;
@@ -50,9 +52,15 @@ export interface PulseTag {
 /** How the generic Pulse renders a channel's hero event. */
 export interface PulseConfig {
   /** Uppercase kicker before the "ago" counter, e.g. "LATEST M2.5+". */
-  kicker: string;
+  kicker: string | ((ev: LiveEvent) => string);
+  /** 'stack' = number above the title (earthquakes); 'inline' = number beside it (wikipedia). */
+  layout?: 'stack' | 'inline';
+  /** Short static explanation under the hero. */
+  note?: string;
   /** Shown when there is no hero yet. */
   emptyText: string;
+  /** Kicker shown with the empty state (needed when `kicker` is a function). */
+  emptyKicker?: string;
   /** Picks the hero. Default: the newest important event. */
   pick?(store: EventStore, now: number): LiveEvent | undefined;
   value(ev: LiveEvent): string;
@@ -92,7 +100,19 @@ export interface Channel {
   retainImportantMs: number;
   /** Expected update interval; drives the "data delayed" badge (3×). */
   pollMs: number;
-  axis: { top: string; bottom: string; ticks: string[]; mobileTicks: string[] };
+  axis: {
+    top: string;
+    bottom: string;
+    /** Optional colours for the top/bottom labels (default: --faint). */
+    topColor?: string;
+    bottomColor?: string;
+    /** Draw a horizontal line through the middle (for diverging values). */
+    centerLine?: boolean;
+    ticks: string[];
+    mobileTicks: string[];
+  };
+  /** Order of the parts of a river label. Default 'value-first' ("M4.6 Chile"). */
+  labelOrder?: 'value-first' | 'value-last';
   /** Side list heading, e.g. "BEFORE THAT". */
   sideTitle: string;
   sideItem(ev: LiveEvent): SideItem;

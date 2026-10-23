@@ -48,11 +48,15 @@ export class SideList {
         const item = this.channel.sideItem(ev);
         const value = el('span', { class: 'side__value' }, item.value);
         value.style.color = ev.color;
-        const children = [value, el('span', { class: 'side__name' }, item.title), ago];
+        const name = el('span', { class: 'side__name' }, item.title);
+        // Older rows fade, but text never drops below WCAG contrast:
+        // names blend toward --faint (4.5:1) and the large values stay ≥ 3:1.
+        name.style.color = `color-mix(in srgb, var(--faint) ${i * 25}%, var(--text))`;
+        value.style.opacity = (1 - i * 0.085).toFixed(2);
+        const children = [value, name, ago];
         const row = ev.url
           ? externalLink(ev.url, { class: 'side__item' }, ...children)
           : el('div', { class: 'side__item' }, ...children);
-        row.style.opacity = (1 - i * 0.14).toFixed(2);
         return el('li', {}, row);
       }),
     );

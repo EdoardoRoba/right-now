@@ -7,6 +7,12 @@
  */
 import type { ChannelContext } from '../core/types';
 import { featureToEvent } from '../channels/earthquakes/source';
+import {
+  parseChange,
+  setCurrent,
+  WikipediaRuntime,
+  type RawChange,
+} from '../channels/wikipedia/source';
 
 const PLACES = [
   'Off the east coast of Honshu, Japan',
@@ -78,4 +84,111 @@ export function startEarthquakeDemo({ store, freshness }: ChannelContext): () =>
   loop(800, 3000, false);
   loop(12_000, 30_000, true);
   return () => timers.forEach(clearTimeout);
+}
+
+// ---------------------------------------------------------------------------
+// Wikipedia (mockup F): background edits at real speed, plus a burst of edits
+// to one article every 10–15 s that goes through the real surge detector.
+// ---------------------------------------------------------------------------
+
+const WP_TITLES = [
+  'Atlantic hurricane season',
+  'Solar eclipse',
+  'Mount Etna',
+  'Nobel Prize in Physics',
+  'Formula One',
+  'James Webb Space Telescope',
+  'Rome',
+  'Champions League',
+  'Bitcoin',
+  'Aurora',
+  'Volcano',
+  'Climate of Italy',
+  'Mars',
+  'Olympic Games',
+  'Large language model',
+  'Tsunami',
+  'Euro',
+  'Comet',
+  'Supernova',
+  'Venice',
+];
+const WP_SURGE = [
+  'Mount Etna',
+  'Solar eclipse',
+  'Nobel Prize in Physics',
+  'Comet',
+  'Aurora',
+  'Tsunami',
+];
+const WP_SERVERS = ['en', 'it', 'de', 'es', 'fr', 'ja'].map((l) => `${l}.wikipedia.org`);
+
+function fakeBytes(): number {
+  const sign = Math.random() < 0.68 ? 1 : -1;
+  return Math.round(sign * Math.pow(10, Math.random() * Math.random() * 4.2));
+}
+
+function fakeChange(
+  title: string,
+  server: string,
+  editor: string,
+  bot: boolean,
+  bytes = fakeBytes(),
+): RawChange {
+  seq += 1;
+  return {
+    meta: { id: `DEMO-2026-${10000 + seq}`, dt: new Date().toISOString() },
+    type: 'edit',
+    namespace: 0,
+    title,
+    server_name: server,
+    bot,
+    editor,
+    length: { old: 5000, new: 5000 + bytes },
+  };
+}
+
+export function startWikipediaDemo({ store, freshness }: ChannelContext): () => void {
+  const rt = new WikipediaRuntime();
+  setCurrent(rt);
+  const push = (raw: RawChange) => {
+    const edit = parseChange(raw);
+    if (edit) store.upsert(rt.ingest(edit, Date.now()), Date.now());
+    freshness.markSuccess(Date.now());
+  };
+  const background = setInterval(() => {
+    const n = Math.random() < 0.55 ? 1 : 0;
+    for (let i = 0; i < n + (Math.random() < 0.15 ? 1 : 0); i++) {
+      push(
+        fakeChange(pick(WP_TITLES), pick(WP_SERVERS), `demo-${Math.random()}`, Math.random() < 0.2),
+      );
+    }
+  }, 200);
+  let burst: ReturnType<typeof setTimeout>;
+  const surge = () => {
+    const title = pick(WP_SURGE);
+    const server = pick(WP_SERVERS);
+    let i = 0;
+    const tick = setInterval(() => {
+      push(
+        fakeChange(
+          title,
+          server,
+          `demo-editor-${i % 7}`,
+          false,
+          i === 0 ? Math.round(2000 + Math.random() * 6000) : undefined,
+        ),
+      );
+      if (++i >= 18) clearInterval(tick);
+    }, 90);
+    burst = setTimeout(surge, 10_000 + Math.random() * 5_000);
+  };
+  burst = setTimeout(surge, 1_500);
+  const prune = setInterval(() => rt.prune(Date.now(), 6 * 3_600_000), 5_000);
+  return () => {
+    clearInterval(background);
+    clearInterval(prune);
+    clearTimeout(burst);
+    setCurrent(null);
+  };
 }

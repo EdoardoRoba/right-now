@@ -23,4 +23,14 @@ describe('Freshness', () => {
   it('is delayed if the source never answers', () => {
     expect(new Freshness(60_000, 0).state(181_000)).toBe('delayed');
   });
+
+  it('reports reconnecting honestly, and delayed once it takes too long', () => {
+    const f = new Freshness(5_000, 0);
+    f.markSuccess(1_000);
+    f.markReconnecting();
+    expect(f.state(3_000)).toBe('reconnecting');
+    expect(f.state(17_000)).toBe('delayed');
+    f.markSuccess(18_000);
+    expect(f.state(18_000)).toBe('live');
+  });
 });

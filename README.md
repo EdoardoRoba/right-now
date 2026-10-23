@@ -2,6 +2,8 @@
 
 **A live, beautiful window on what's happening in the world — right now.**
 
+**Live:** https://right-now.rn-earth.workers.dev/earthquakes
+
 Each channel shows one thing happening on Earth in real time, using only open, official, legally reusable data. Every channel uses the same **Flow + Pulse** pattern:
 
 - **Pulse:** the latest important event, shown huge with shockwave rings and a live "4.2 s ago" counter.
@@ -9,15 +11,19 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 - **Side list:** earlier notable events plus two live stats.
 - **Ticker:** the channel's tagline and its data attribution.
 
-| Channel         | Source                               | Status             |
-| --------------- | ------------------------------------ | ------------------ |
-| Earthquakes     | USGS real-time feeds (public domain) | **v1 — live**      |
-| Wikipedia pulse | Wikimedia EventStreams               | v1.1 — coming soon |
-| Exploited vulns | CISA KEV + NVD API                   | v1.2 — coming soon |
+| Channel         | Source                                    | Status             |
+| --------------- | ----------------------------------------- | ------------------ |
+| Earthquakes     | USGS real-time feeds (public domain)      | **v1 — live**      |
+| Wikipedia pulse | Wikimedia EventStreams (CC BY-SA content) | **v1.1 — live**    |
+| Exploited vulns | CISA KEV + NVD API                        | v1.2 — coming soon |
 
 ![Right Now — Earthquakes channel, live USGS data](docs/screenshot-live-desktop.png)
 
-<sub>Live USGS data, 2026-10-23 06:05 UTC. A real hour is calm; the demo screenshot (`?demo=1`, badged) is in `docs/`.</sub>
+<sub>Live USGS data, 2026-10-23 06:05 UTC. A real hour is calm.</sub>
+
+![Motion: a new M2.5+ quake takes over the Pulse (demo data)](docs/demo.gif)
+
+<sub>Motion preview recorded with `?demo=1`, which is busier than reality and labelled DEMO DATA. The live site shows only real USGS data.</sub>
 
 ## Reading the Earthquakes channel
 
@@ -26,6 +32,14 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 - **Dot size and colour:** magnitude. Blue is below M3, amber is M3–4.9, orange is M5 and above.
 - **Important quakes:** every M2.5+ quake gets a ring and a label, and the newest becomes the Pulse. If the last hour was quiet, the Pulse shows the latest M2.5+ from the past day, with an honest "2 h ago".
 - **More detail:** hover or tap a dot for details and a link to the USGS event page.
+
+## Reading the Wikipedia pulse
+
+- **Left → right:** the last 60 seconds, at real speed. Every dot is one edit to a Wikipedia article, in any language.
+- **Above the line:** text added. **Below the line:** text removed. Distance from the line is the size of the change, on a log scale. Grey dots are bots.
+- **The Pulse:** a **surge**, meaning at least 15 edits by at least 5 different people to one article within 10 minutes. That usually means something just happened in the world. Between surges, the Pulse shows the **most-edited article** of the last 10 minutes, labelled as such.
+- **Privacy:** usernames and IP addresses are never shown or stored.
+- **Bandwidth:** your browser streams about 3 MB per minute from Wikimedia and disconnects while the tab is hidden.
 
 ## Run it
 

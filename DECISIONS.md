@@ -18,9 +18,10 @@ A short log of the choices made and why. Newest sections are at the bottom.
 - Canvas river, Pulse, side list, stats, ticker, freshness badge, tooltip
 - Reduced motion and mobile layouts
 - Unit tests + e2e smoke test with fixtures
-- ⏳ Cloudflare Pages deploy and README screenshots/GIF from real data, which need network access to USGS and a Cloudflare account (see "Open items")
+- ✅ Deployed on Cloudflare Workers (static assets), live at https://right-now.rn-earth.workers.dev, with live-data screenshots in the README
+- ✅ README GIF (`docs/demo.gif`, recorded in badged demo mode, because a real hour moves too slowly to show in a few seconds)
 
-**M2 — Wikipedia pulse (v1.1)**: `src/channels/wikipedia/` with an EventSource source, surge detector (+ recorded fixture), and a CSP `connect-src` entry.
+**M2 — Wikipedia pulse (v1.1)** ✅: `src/channels/wikipedia/` with an EventSource source, surge detector, recorded privacy-safe fixture, unit + e2e tests. See the "Wikipedia pulse" section.
 **M3 — Exploited (v1.2)**: Worker cron (KEV + NVD) → `/api/exploited`, `src/channels/exploited/`.
 **M4 — Polish**: OG image, About & sources page, keyboard shortcuts 1/2/3, share button.
 
@@ -100,7 +101,11 @@ Measured with headless Chromium (software rendering, 4 vCPU container, 1280×880
 - Caveat: Chromium's `performance.memory` is coarse (bucketed) without `--enable-precise-memory-info`, so this rules out a real leak but not drift under about 1 MB.
 - Still to do: a 30-minute DevTools check on the deployed site.
 
-Lighthouse has not been run yet: it needs the deployed URL.
+**Lighthouse (mobile, live URL, 2026-10-23)**: Performance 98, Accessibility 96, Best Practices 100, SEO 91. LCP 1.7 s, FCP 1.1 s, TBT 150 ms, CLS 0.006.
+
+- Fixed after that run:
+  - The fading side list dropped the small "ago" text below 4.5:1 contrast. Rows now fade by blending the name toward `--faint` and dimming only the large value (kept ≥ 3:1). Accessibility re-ran at 100 locally with a full list.
+  - Added `robots.txt` (the SPA fallback was answering it with HTML).
 
 ## Live check (2026-10-23)
 
@@ -112,9 +117,43 @@ Lighthouse has not been run yet: it needs the deployed URL.
 ## Open items
 
 - [ ] Allow `www.usgs.gov` in the dev environment to re-read the USGS copyright/credit page, then update `ATTRIBUTION.md`. The feed documentation was re-read on 2026-10-23.
-- [ ] Deploy to Cloudflare Pages (needs the owner's Cloudflare account; see the README).
+- [x] Deployed 2026-10-23 on Cloudflare Workers Builds (production branch `main`, `npm run build` then `npx wrangler deploy`). The account subdomain was renamed to a neutral `rn-earth` so the URL carries no personal name.
+- [ ] Lighthouse (mobile) and a 30-minute DevTools memory check on the live URL.
 - [ ] README screenshots and a GIF with real data; Lighthouse run on the deployed URL.
 - [ ] Choose a license for the code (none has been set yet).
+
+## Wikipedia pulse (v1.1)
+
+- **Filter** (as the brief says): `type === 'edit'`, namespace 0, `server_name` ending in `.wikipedia.org`. Bytes changed = `length.new − length.old`.
+  - Measured: of about 38 stream events/s, about 3–5/s are Wikipedia article edits, and roughly 40% of those are bots.
+- **Bandwidth**: the stream can't be filtered at the source and isn't compressed, about 49 KB/s (3 MB/min) per visitor.
+  - A Worker relay would blow the free plan's 10 ms CPU limit, so the browser connects directly, and **the stream is closed while the tab is hidden**.
+  - Not done: a Save-Data / "tap to start" gate. It's worth adding if phone users complain.
+- **Bots** are drawn dimmed and counted in the stats, but **excluded from surge detection**, so a bot spree on one article is never a "surge".
+- **Surge** = ≥ 15 edits by ≥ 5 distinct editors to one article within a sliding 10 minutes (constants in `surge.ts`, unit-tested).
+  - One surge episode keeps one id and updates its counts in place.
+  - Once the article falls back under the thresholds, a later crossing is a new surge.
+- **Between surges**, the Pulse shows the **most-edited article of the last 10 minutes** (≥ 3 edits by ≥ 2 people), with the kicker "MOST EDITED · LAST 10 MIN", so it never pretends to be a surge.
+  - Real surges are rare: none in a 10-minute sample, which is expected; they come with breaking news.
+  - A surge stays the hero for 60 minutes.
+  - A challenger needs 2 more edits than the current article to replace it, to avoid flicker.
+- **Distinct editors** are counted with an FNV-1a 32-bit hash over a per-tab random salt. Names are never stored. The fixture recorder writes SHA-256 hashes with a discarded random salt. Tests assert no username or IP ever reaches the DOM.
+- **Drawing is capped at 30 dots/s** (token bucket); stats count every edit.
+  - **Edits / second** is a 5 s moving average.
+  - **Text added · 60 s** sums positive byte changes.
+- **Store updates are batched every 250 ms**, so the page re-renders 4×/s, not once per message.
+- **Reconnection**: the browser's EventSource reconnects by itself, sending `Last-Event-ID`.
+  - If the connection is closed for good, we reopen with `?since=` (never more than 30 s back, so a replay can't flood the page), with exponential backoff (1 s → 60 s).
+  - The header shows an amber "Reconnecting…", and "Data delayed" if it takes more than 15 s.
+  - Measured: Wikimedia drops long connections on its own (one recording was cut after about 33 MB).
+- **Labels**: surges ("Comet 19 edits") always get one. Human edits of ±4,000 bytes or more get one if there's room ("Taula de multiplicar +4,213"). The value goes after the title, as in mockup F.
+- **New core options** for this channel:
+  - `PulseConfig.layout: 'inline'`, `note`, a kicker that can be a function, and `emptyKicker`
+  - `axis.topColor` / `bottomColor` / `centerLine`
+  - `Channel.labelOrder`, and `LiveEvent.showLabel`
+- **Live check**: the production build ran on the real stream for 2 minutes (relayed into the browser unchanged):
+  - about 2.4–4.4 edits/s and about 42 kB of text added per minute
+  - labelled big edits, dimmed bots, no errors
 
 ## Tooling upgrade (2026-10-23)
 

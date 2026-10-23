@@ -105,8 +105,7 @@ test.describe('earthquakes', () => {
 
 test('coming-soon channels and 404', async ({ page }) => {
   await page.route('https://earthquake.usgs.gov/**', (r) => r.abort());
-  await page.goto('/wikipedia');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Wikipedia pulse');
+  await page.goto('/earthquakes');
   await page.getByRole('link', { name: 'Exploited vulns' }).click();
   await expect(page).toHaveURL(/\/exploited$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Exploited vulns');
