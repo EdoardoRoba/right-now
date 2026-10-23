@@ -20,6 +20,17 @@ export const BUSIEST_MIN_EDITS = 2;
 export const BUSIEST_MIN_EDITORS = 2;
 /** How far back to resume after a disconnect (bounded so a replay can't flood the page). */
 export const MAX_RESUME_MS = 30_000;
+/**
+ * Events older than this are not "right now": they're never drawn or counted.
+ * (A numeric `?since=` once made Wikimedia replay 9 days of history.)
+ */
+export const STALE_MS = 2 * 60_000;
+/** After this many stale messages in a row, drop the connection and start fresh. */
+export const STALE_RESET_AFTER = 200;
+
+/** `?since=` must be an ISO date: Wikimedia mis-reads epoch milliseconds (verified live). */
+export const resumeUrl = (since: number) =>
+  `${STREAM_URL}?since=${encodeURIComponent(new Date(since).toISOString())}`;
 const LOG_CAP = 4.2; // log10 of ~16 kB: the river's full height
 
 // ---------------------------------------------------------------------------
@@ -303,9 +314,11 @@ export interface StreamOptions {
 
 /**
  * Connects with EventSource. The browser reconnects by itself (sending
- * Last-Event-ID); if the connection is closed for good we reopen it with
- * `?since=` (bounded to the last 30 s) and exponential backoff. The stream is
- * closed while the tab is hidden, to save the visitor's bandwidth.
+ * Last-Event-ID); if the connection is closed for good we reopen it with an
+ * ISO `?since=` (bounded to the last 30 s) and exponential backoff. Stale
+ * events (a replay of old history) are ignored and trigger a fresh
+ * connection. The stream is closed while the tab is hidden, to save the
+ * visitor's bandwidth.
  */
 export function startWikipedia(ctx: ChannelContext, opts: StreamOptions): () => void {
   const ES = opts.EventSourceImpl ?? EventSource;
@@ -320,6 +333,7 @@ export function startWikipedia(ctx: ChannelContext, opts: StreamOptions): () => 
   let stopped = false;
   let batch: LiveEvent[] = [];
   let lastMark = 0;
+  let staleRun = 0;
 
   const onMessage = (msg: MessageEvent<string>) => {
     let raw: RawChange;
@@ -328,12 +342,24 @@ export function startWikipedia(ctx: ChannelContext, opts: StreamOptions): () => 
     } catch {
       return;
     }
-    const dt = Date.parse(raw.meta?.dt ?? '');
+    const t = now();
+    const dt = Date.parse(raw.meta?.dt ?? raw.dt ?? '');
+    if (Number.isFinite(dt) && dt < t - STALE_MS) {
+      // Old history, not "right now": never draw or count it.
+      ctx.freshness.markReconnecting();
+      if (++staleRun >= STALE_RESET_AFTER) {
+        staleRun = 0;
+        lastDt = null;
+        disconnect();
+        connect();
+      }
+      return;
+    }
+    staleRun = 0;
     if (Number.isFinite(dt)) lastDt = Math.max(lastDt ?? 0, dt);
     const edit = parseChange(raw);
-    if (edit) batch.push(...rt.ingest(edit, now()));
+    if (edit) batch.push(...rt.ingest(edit, t));
     retries = 0;
-    const t = now();
     if (t - lastMark > 1000) {
       lastMark = t;
       ctx.freshness.markSuccess(t);
@@ -343,7 +369,7 @@ export function startWikipedia(ctx: ChannelContext, opts: StreamOptions): () => 
   const connect = () => {
     if (stopped) return;
     const since = lastDt === null ? null : Math.max(lastDt, now() - MAX_RESUME_MS);
-    es = new ES(since === null ? STREAM_URL : `${STREAM_URL}?since=${since}`);
+    es = new ES(since === null ? STREAM_URL : resumeUrl(since));
     es.onmessage = onMessage;
     es.onerror = () => {
       ctx.freshness.markReconnecting();

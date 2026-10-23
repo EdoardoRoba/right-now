@@ -207,6 +207,17 @@ Measured on 46 minutes of the live stream (10,085 Wikipedia article edits, 3.6/s
 - **KEV**: catalog 2026.10.21 with 30 entries. The Pulse showed the newest one (Siemens Software Center, CVE-2026-110936) while its score was still being looked up.
 - **NVD_API_KEY** is set as an encrypted Worker secret (Production). With a key, the Worker now looks up 5 KEV scores per run instead of 2.
 
+## Bug: Wikipedia replayed 9-day-old history (fixed 2026-10-23)
+
+- **Symptom (reported on the live site):** the river was empty, the Pulse said "8 days ago", and the stats showed 220 edits/s and 1,906 kB per minute.
+- **Cause:** after a dropped connection or a hidden tab, we resumed with `?since=<epoch ms>`. The EventStreams spec says epoch ms is accepted, but live it makes Wikimedia start at the **oldest retained offset** (2026-10-14) and replay it at full speed (27,025 events in 8 s).
+- **Fix:**
+  1. `since` is now an ISO date (`?since=2026-10-23T08:48:31.389Z`). Verified live: it resumes at that exact time and continues live.
+  2. Defence in depth: any event more than 2 min old is never drawn or counted. While old events arrive, the header shows "Reconnecting…". After 200 stale messages in a row, the page drops the connection and reconnects at the live position.
+- **Tests:**
+  - a unit test replays 9-day-old edits and asserts nothing is drawn or counted and a fresh connection is opened;
+  - a live harness forced a disconnect mid-session and confirmed the resume (5.0 → 4.0 edits/s, no replay).
+
 ## Tooling upgrade (2026-10-23)
 
 - **Upgraded the dev tooling to Vite 8 and Vitest 5**: `npm audit` had flagged moderate/critical advisories in the old Vite 5 / Vitest 2 tool chain. The app ships zero runtime dependencies, so visitors were never exposed; this keeps the dev tooling clean. `npm audit` now reports 0.
