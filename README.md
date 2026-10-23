@@ -11,11 +11,11 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 - **Side list:** earlier notable events plus two live stats.
 - **Ticker:** the channel's tagline and its data attribution.
 
-| Channel         | Source                                    | Status             |
-| --------------- | ----------------------------------------- | ------------------ |
-| Earthquakes     | USGS real-time feeds (public domain)      | **v1 — live**      |
-| Wikipedia pulse | Wikimedia EventStreams (CC BY-SA content) | **v1.1 — live**    |
-| Exploited vulns | CISA KEV + NVD API                        | v1.2 — coming soon |
+| Channel         | Source                                    | Status          |
+| --------------- | ----------------------------------------- | --------------- |
+| Earthquakes     | USGS real-time feeds (public domain)      | **v1 — live**   |
+| Wikipedia pulse | Wikimedia EventStreams (CC BY-SA content) | **v1.1 — live** |
+| Exploited vulns | CISA KEV (CC0) + NVD API via our Worker   | **v1.2 — live** |
 
 ![Right Now — Earthquakes channel, live USGS data](docs/screenshot-live-desktop.png)
 
@@ -41,6 +41,17 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 - **Privacy:** usernames and IP addresses are never shown or stored.
 - **Bandwidth:** your browser streams about 3 MB per minute from Wikimedia and disconnects while the tab is hidden.
 
+## Reading the Exploited vulnerabilities channel
+
+- **Left → right:** the last 24 hours. **Top → bottom:** CVSS base score, from 10 (critical) down to 0.
+- **Small squares:** every new CVE published to the NVD. Unscored ones sit dim on the bottom edge until NVD scores them.
+- **Big glowing circles labelled EXPLOITED:** vulnerabilities CISA has confirmed attackers are using.
+- **The Pulse:** the newest addition to CISA's Known Exploited Vulnerabilities catalog. That catalog changes a few times a week, so "3 days ago" is normal. The Pulse also shows:
+  - the CVSS score and severity
+  - "Known ransomware use" only when CISA says so
+  - the **US federal deadline** to fix it
+- **Updates:** our server asks NVD every 20 minutes and CISA every 2 hours. Your browser only talks to our server. This product uses the NVD API but is not endorsed or certified by the NVD.
+
 ## Run it
 
 Requires Node 22.12 or later (`.nvmrc` pins 22).
@@ -64,11 +75,10 @@ npm run build          # → dist/
    - **Deploy command:** `npx wrangler deploy`
    - leave everything else at its default
 
-   `wrangler.jsonc` makes the deploy upload `dist/` as static assets, with SPA fallback; `public/_headers` sets the CSP and caching. Static asset requests are free.
+   `wrangler.jsonc` defines one Worker that serves `dist/` as static assets (free, with SPA fallback) and runs code only for `/api/*`, plus two cron jobs. The KV namespace is created automatically on the first deploy. `public/_headers` sets the CSP and caching.
 
-3. Production deploys from the default branch (`main`). Other branches get preview URLs.
-4. **API Worker** (optional in v1; only a CORS fallback for USGS): `npm run worker:deploy`.
-5. **v1.2 only:** `npx wrangler secret put NVD_API_KEY --config worker/wrangler.toml`. The key lives only in Cloudflare; never put it in a file in this repo.
+3. Production deploys from the default branch (`main`).
+4. **Optional:** add a free NVD API key (https://nvd.nist.gov/developers/request-an-api-key) as a **secret**: **right-now → Settings → Variables and Secrets → Add → Secret**, named `NVD_API_KEY`. Or run `npx wrangler secret put NVD_API_KEY`. It works without one, at NVD's lower rate limit. Never put the key in a file in this repo.
 
 ## Architecture
 
@@ -88,9 +98,12 @@ src/
   channels/
     registry.ts         the menu (lazy-loaded channels)
     earthquakes/        USGS source, mapping, copy, fixtures, tests
+    wikipedia/          EventStreams source, surge detector, fixtures, tests
+    exploited/          /api/exploited client, mapping, tests
   demo/generators.ts    dev-only fake data (?demo=1)
   styles/               tokens · base · layout · components · animations
-worker/                 Cloudflare Worker for /api/* (proxies, future cron)
+worker/src/             the same Worker's code: /api/exploited, KEV + NVD cron jobs, USGS fallback proxy
+wrangler.jsonc          one Worker: static assets + /api/* + crons (no secrets, no account ids)
 ```
 
 To add a channel, add a folder under `src/channels/` that exports a `Channel`, then add one entry in `registry.ts`.

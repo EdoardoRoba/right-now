@@ -1,0 +1,193 @@
+{
+  "resultsPerPage": 5,
+  "startIndex": 0,
+  "totalResults": 5,
+  "format": "NVD_CVE",
+  "version": "2.0",
+  "timestamp": "2026-10-23T07:00:00.000",
+  "vulnerabilities": [
+    {
+      "cve": {
+        "id": "CVE-2026-90001",
+        "sourceIdentifier": "test@example.org",
+        "published": "2026-10-23T01:15:10.123",
+        "lastModified": "2026-10-23T01:15:10.123",
+        "vulnStatus": "Analyzed",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "A test product allows remote code execution via crafted requests. Further details follow here."
+          },
+          {
+            "lang": "es",
+            "value": "Descripci\u00f3n de prueba."
+          }
+        ],
+        "metrics": {
+          "cvssMetricV31": [
+            {
+              "source": "test@example.org",
+              "type": "Primary",
+              "cvssData": {
+                "version": "3.1",
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "baseScore": 9.8,
+                "baseSeverity": "CRITICAL"
+              },
+              "exploitabilityScore": 3.9,
+              "impactScore": 5.9
+            },
+            {
+              "source": "test@example.org",
+              "type": "Secondary",
+              "cvssData": {
+                "version": "3.1",
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "baseScore": 7.5,
+                "baseSeverity": "HIGH"
+              },
+              "exploitabilityScore": 3.9,
+              "impactScore": 5.9
+            }
+          ]
+        },
+        "weaknesses": [],
+        "configurations": [],
+        "references": []
+      }
+    },
+    {
+      "cve": {
+        "id": "CVE-2026-90002",
+        "sourceIdentifier": "test@example.org",
+        "published": "2026-10-23T03:40:00.000",
+        "lastModified": "2026-10-23T03:40:00.000",
+        "vulnStatus": "Analyzed",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "Example widget before 2.0 has a cross-site scripting issue."
+          },
+          {
+            "lang": "es",
+            "value": "Descripci\u00f3n de prueba."
+          }
+        ],
+        "metrics": {
+          "cvssMetricV40": [
+            {
+              "source": "test@example.org",
+              "type": "Secondary",
+              "cvssData": {
+                "version": "4.0",
+                "vectorString": "CVSS:4.0/AV:N",
+                "baseScore": 6.9,
+                "baseSeverity": "MEDIUM"
+              }
+            }
+          ]
+        },
+        "weaknesses": [],
+        "configurations": [],
+        "references": []
+      }
+    },
+    {
+      "cve": {
+        "id": "CVE-2026-90003",
+        "sourceIdentifier": "test@example.org",
+        "published": "2026-10-23T05:05:05.555",
+        "lastModified": "2026-10-23T05:05:05.555",
+        "vulnStatus": "Awaiting Analysis",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "Awaiting analysis entry with a description that is deliberately long and has no sentence end so it must be cut at one hundred and sixty characters to keep the payload small and tidy for the river tooltip display"
+          },
+          {
+            "lang": "es",
+            "value": "Descripci\u00f3n de prueba."
+          }
+        ],
+        "metrics": {},
+        "weaknesses": [],
+        "configurations": [],
+        "references": []
+      }
+    },
+    {
+      "cve": {
+        "id": "CVE-2026-90004",
+        "sourceIdentifier": "test@example.org",
+        "published": "2026-10-23T06:00:00.000",
+        "lastModified": "2026-10-23T06:00:00.000",
+        "vulnStatus": "Analyzed",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "Legacy entry scored only with CVSS 2."
+          },
+          {
+            "lang": "es",
+            "value": "Descripci\u00f3n de prueba."
+          }
+        ],
+        "metrics": {
+          "cvssMetricV2": [
+            {
+              "source": "nvd@nist.gov",
+              "type": "Primary",
+              "cvssData": {
+                "version": "2.0",
+                "vectorString": "AV:N/AC:L/Au:N/C:P/I:P/A:P",
+                "baseScore": 5.0
+              },
+              "baseSeverity": "MEDIUM"
+            }
+          ]
+        },
+        "weaknesses": [],
+        "configurations": [],
+        "references": []
+      }
+    },
+    {
+      "cve": {
+        "id": "CVE-2026-90005",
+        "sourceIdentifier": "test@example.org",
+        "published": "2026-10-23T06:30:00.000",
+        "lastModified": "2026-10-23T06:30:00.000",
+        "vulnStatus": "Rejected",
+        "descriptions": [
+          {
+            "lang": "en",
+            "value": "Rejected test entry."
+          },
+          {
+            "lang": "es",
+            "value": "Descripci\u00f3n de prueba."
+          }
+        ],
+        "metrics": {
+          "cvssMetricV31": [
+            {
+              "source": "test@example.org",
+              "type": "Secondary",
+              "cvssData": {
+                "version": "3.1",
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "baseScore": 3.1,
+                "baseSeverity": "LOW"
+              },
+              "exploitabilityScore": 3.9,
+              "impactScore": 5.9
+            }
+          ]
+        },
+        "weaknesses": [],
+        "configurations": [],
+        "references": []
+      }
+    }
+  ]
+}

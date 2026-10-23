@@ -6,6 +6,8 @@
  * than the real world so the layout can be judged.
  */
 import type { ChannelContext } from '../core/types';
+import { payloadToEvents } from '../channels/exploited/source';
+import type { CompactCve, ExploitedPayload, KevItem, KevScore } from '../../worker/src/types';
 import { featureToEvent } from '../channels/earthquakes/source';
 import {
   parseChange,
@@ -191,4 +193,93 @@ export function startWikipediaDemo({ store, freshness }: ChannelContext): () => 
     clearTimeout(burst);
     setCurrent(null);
   };
+}
+
+// ---------------------------------------------------------------------------
+// Exploited vulnerabilities (mockup E): generic product names and DEMO ids only.
+// ---------------------------------------------------------------------------
+
+const EX_PRODUCTS = [
+  ['Example', 'VPN Gateway'],
+  ['Sample Corp', 'Mail Server'],
+  ['Acme', 'File Transfer Appliance'],
+  ['Demo Systems', 'Web Framework'],
+  ['Placeholder', 'Firewall OS'],
+  ['Testware', 'Remote Desktop'],
+];
+const EX_KINDS = [
+  'Authentication bypass',
+  'Remote code execution',
+  'Path traversal',
+  'Command injection',
+  'Deserialization of untrusted data',
+];
+
+function demoCve(published: number): CompactCve {
+  seq += 1;
+  const score =
+    Math.random() < 0.08 ? null : Math.round((1 + 9 * Math.pow(Math.random(), 0.7)) * 10) / 10;
+  return {
+    id: `DEMO-2026-${10000 + seq}`,
+    published,
+    score,
+    version: score === null ? null : '3.1',
+    severity: null,
+    excerpt: `${pick(EX_KINDS)} in a demo product.`,
+  };
+}
+
+function demoKev(daysAgo: number): KevItem & KevScore {
+  seq += 1;
+  const [vendor, product] = pick(EX_PRODUCTS) as [string, string];
+  const added = new Date(Date.now() - daysAgo * 86_400_000).toISOString().slice(0, 10);
+  const due = new Date(Date.now() + (21 - daysAgo) * 86_400_000).toISOString().slice(0, 10);
+  const score = Math.round((7 + 3 * Math.random()) * 10) / 10;
+  return {
+    cve: `DEMO-2026-${10000 + seq}`,
+    vendor,
+    product,
+    name: `${vendor} ${product} ${pick(EX_KINDS)} Vulnerability`,
+    dateAdded: added,
+    dueDate: due,
+    ransomware: Math.random() < 0.3,
+    score,
+    version: '3.1',
+    severity: score >= 9 ? 'CRITICAL' : 'HIGH',
+  };
+}
+
+export function startExploitedDemo({ store, freshness }: ChannelContext): () => void {
+  const now = Date.now();
+  const cves = Array.from({ length: 160 }, () => demoCve(now - Math.random() * 24 * 3_600_000));
+  const kev = [0, 0.4, 1, 3, 6, 9].map(demoKev);
+  const payload: ExploitedPayload = {
+    generatedAt: now,
+    nvd: { fetchedAt: now, ok: true, cves },
+    kev: {
+      fetchedAt: now,
+      ok: true,
+      catalogVersion: 'demo',
+      dateReleased: new Date(now - 3_600_000).toISOString(),
+      items: kev,
+    },
+  };
+  store.upsert(payloadToEvents(payload, now), now);
+  freshness.markSuccess(now);
+  const timer = setInterval(() => {
+    const t = Date.now();
+    store.upsert(
+      payloadToEvents(
+        {
+          ...payload,
+          nvd: { ...payload.nvd, cves: [demoCve(t)] },
+          kev: { ...payload.kev, items: [] },
+        },
+        t,
+      ),
+      t,
+    );
+    freshness.markSuccess(t);
+  }, 4_000);
+  return () => clearInterval(timer);
 }

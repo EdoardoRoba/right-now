@@ -33,6 +33,10 @@ export interface LiveEvent {
   labelValue?: string;
   /** Label this dot in the river even though it isn't important (e.g. a huge edit). */
   showLabel?: boolean;
+  /** Colour of the label's value part (default: the dot colour). */
+  labelColor?: string;
+  /** Dot shape in the river (default: circle). */
+  shape?: 'circle' | 'square';
   /** Link to the official source page for this event. */
   url?: string;
   meta: Record<string, string | number | boolean>;
@@ -47,6 +51,8 @@ export interface Stat {
 export interface PulseTag {
   text: string;
   href?: string;
+  /** 'info' (calm blue, default), 'hero' (the hero colour), 'alert' (filled orange), 'neutral' (grey). */
+  tone?: 'info' | 'hero' | 'alert' | 'neutral';
 }
 
 /** How the generic Pulse renders a channel's hero event. */
@@ -64,6 +70,10 @@ export interface PulseConfig {
   /** Picks the hero. Default: the newest important event. */
   pick?(store: EventStore, now: number): LiveEvent | undefined;
   value(ev: LiveEvent): string;
+  /** True when there is no real value to show big (e.g. no score yet): renders it smaller and muted. */
+  valueMuted?(ev: LiveEvent): boolean;
+  /** Optional line between the title and the subtitle. */
+  detail?(ev: LiveEvent): string;
   subtitle(ev: LiveEvent): string;
   /** Optional 0..100 bar under the hero, with labels underneath. */
   bar?: { pct(ev: LiveEvent): number; labels: { text: string; at: number }[] };
@@ -108,6 +118,8 @@ export interface Channel {
     bottomColor?: string;
     /** Draw a horizontal line through the middle (for diverging values). */
     centerLine?: boolean;
+    /** Dashed horizontal guides at these y positions (0..1, same scale as LiveEvent.y). */
+    guides?: number[];
     ticks: string[];
     mobileTicks: string[];
   };

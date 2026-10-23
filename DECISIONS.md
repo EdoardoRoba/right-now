@@ -22,7 +22,7 @@ A short log of the choices made and why. Newest sections are at the bottom.
 - ✅ README GIF (`docs/demo.gif`, recorded in badged demo mode, because a real hour moves too slowly to show in a few seconds)
 
 **M2 — Wikipedia pulse (v1.1)** ✅: `src/channels/wikipedia/` with an EventSource source, surge detector, recorded privacy-safe fixture, unit + e2e tests. See the "Wikipedia pulse" section.
-**M3 — Exploited (v1.2)**: Worker cron (KEV + NVD) → `/api/exploited`, `src/channels/exploited/`.
+**M3 — Exploited (v1.2)** ✅: Worker cron (KEV + NVD) → `/api/exploited`, `src/channels/exploited/`. See the "Exploited vulnerabilities" section.
 **M4 — Polish**: OG image, About & sources page, keyboard shortcuts 1/2/3, share button.
 
 ## Architecture
@@ -154,6 +154,27 @@ Measured with headless Chromium (software rendering, 4 vCPU container, 1280×880
 - **Live check**: the production build ran on the real stream for 2 minutes (relayed into the browser unchanged):
   - about 2.4–4.4 edits/s and about 42 kB of text added per minute
   - labelled big edits, dimmed bots, no errors
+
+## Exploited vulnerabilities (v1.2)
+
+- **One Worker for everything.** The `/api` Worker was merged into the site's Worker (`wrangler.jsonc`: `main` + `assets` with `run_worker_first: ["/api/*"]`).
+  - There is one deploy and one origin, so there's no CORS and the CSP stays `connect-src 'self'`.
+  - The NVD secret goes on the same Worker.
+  - Static requests stay free and never run code.
+- **KV with no id in the repo**: Wrangler 4 provisions the namespace on first deploy. Storage per channel is three keys (`kev`, `nvd`, `scores`). Each run writes 1–2 keys, about 110 writes a day against the free 1,000.
+- **Free plan's 10 ms CPU budget**, handled per source:
+  - **KEV** (1.8 MB) is streamed, and parsing stops after the newest 40 entries. We use a string-aware brace matcher instead of `JSON.parse` on the whole file; the entries are newest-first, and are sorted again anyway.
+  - **NVD** is read in small windows: on first fill, 4 h at a time (24 h takes about 80 minutes); afterwards, the last 2 h on every run, so scores NVD adds shortly after publication are picked up. CVEs older than 25 h are dropped.
+- **CVSS choice**: 3.1, then 4.0, 3.0, 2.0. Within a version, NVD's Primary score comes before the CNA's Secondary one, and the version is shown. Rejected CVEs are dropped.
+- **Unscored CVEs**: drawn dim on the bottom edge, with "not yet scored" in the tooltip.
+- **KEV entries without a score**: the Pulse shows a muted "No score yet" instead of a number. Scores are fetched from NVD at up to 2 lookups per run, retried after 6 h if still missing.
+- **KEV time**: KEV gives only a date, so we use the catalog's `dateReleased` time when it falls on that date, otherwise midnight UTC. The Pulse honestly says "3 days ago".
+- **Polling every 5 min, not 60 s** (deviation from the brief): the data changes every 20 min, and each `/api/exploited` call runs the Worker (100k requests/day free). At 5 min, one visitor costs about 288 requests a day. Responses are cached for 120 s in the Cache API and in browsers.
+- **Freshness** reflects when the Worker last reached NVD (`nvd.fetchedAt`), not when the browser polled. The badge turns to "Data delayed" after 60 min without a successful NVD run.
+- **First visit after a fresh deploy** starts the jobs immediately (guarded by a 5-minute KV flag), instead of waiting up to 20 minutes for the cron.
+- **The CISA fallback is real**: `www.cisa.gov` was blocked in the dev sandbox, so the local run under workerd fell back to the official GitHub mirror. It fetched catalog 2026.10.21, newest entry CVE-2026-106931 (EG Secure Solutions SiteGuard Server Edition).
+- **Bug caught by running under workerd**: a Worker entry module may only export handlers. Exporting the cron constants made the runtime refuse to start; they now live in `crons.ts`, and a test checks the entry only exports `default`.
+- **Demo mode** uses generic product names ("Example VPN Gateway") and `DEMO-2026-xxxxx` ids only.
 
 ## Tooling upgrade (2026-10-23)
 
