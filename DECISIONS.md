@@ -18,7 +18,8 @@ A short log of the choices made and why. Newest sections are at the bottom.
 - Canvas river, Pulse, side list, stats, ticker, freshness badge, tooltip
 - Reduced motion and mobile layouts
 - Unit tests + e2e smoke test with fixtures
-- ⏳ Cloudflare Pages deploy and README screenshots/GIF from real data, which need network access to USGS and a Cloudflare account (see "Open items")
+- ✅ Deployed on Cloudflare Workers (static assets), live at https://right-now.rn-earth.workers.dev, with live-data screenshots in the README
+- ⏳ README GIF
 
 **M2 — Wikipedia pulse (v1.1)**: `src/channels/wikipedia/` with an EventSource source, surge detector (+ recorded fixture), and a CSP `connect-src` entry.
 **M3 — Exploited (v1.2)**: Worker cron (KEV + NVD) → `/api/exploited`, `src/channels/exploited/`.
@@ -112,7 +113,8 @@ Lighthouse has not been run yet: it needs the deployed URL.
 ## Open items
 
 - [ ] Allow `www.usgs.gov` in the dev environment to re-read the USGS copyright/credit page, then update `ATTRIBUTION.md`. The feed documentation was re-read on 2026-10-23.
-- [ ] Deploy to Cloudflare Pages (needs the owner's Cloudflare account; see the README).
+- [x] Deployed 2026-10-23 on Cloudflare Workers Builds (production branch `main`, `npm run build` then `npx wrangler deploy`). The account subdomain was renamed to a neutral `rn-earth` so the URL carries no personal name.
+- [ ] Lighthouse (mobile) and a 30-minute DevTools memory check on the live URL.
 - [ ] README screenshots and a GIF with real data; Lighthouse run on the deployed URL.
 - [ ] Choose a license for the code (none has been set yet).
 

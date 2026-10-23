@@ -2,6 +2,8 @@
 
 **A live, beautiful window on what's happening in the world — right now.**
 
+**Live:** https://right-now.rn-earth.workers.dev/earthquakes
+
 Each channel shows one thing happening on Earth in real time, using only open, official, legally reusable data. Every channel uses the same **Flow + Pulse** pattern:
 
 - **Pulse:** the latest important event, shown huge with shockwave rings and a live "4.2 s ago" counter.
