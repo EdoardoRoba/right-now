@@ -7,7 +7,7 @@ Right Now shows only real, openly licensed data. Every event links to its offici
 > - USGS feed and feed documentation: verified live.
 > - USGS copyright page (`www.usgs.gov`): still unreachable from the dev environment.
 > - Wikimedia EventStreams: endpoint and spec verified live; policy wiki pages still to re-read.
-> - CISA/NVD: to check before that channel ships.
+> - CISA KEV: mirror verified live. NVD and cisa.gov: verified from the deployed Worker; terms pages still to re-read.
 >
 > Update the "Last checked" dates when you re-read a page.
 
@@ -36,14 +36,16 @@ Right Now shows only real, openly licensed data. Every event links to its offici
 | How we use it           | Each visitor's browser connects directly with `EventSource` (about 3 MB/min) and disconnects while the tab is hidden. Resuming after a drop uses `?since=`, capped to 30 s. Browsers can't set a User-Agent on EventSource; our Node scripts send a descriptive one.              |
 | Last checked            | 2026-10-23: endpoint, spec, `since` / `Last-Event-ID` resume and CORS verified live. ⚠️ The wiki pages describing connection limits and the User-Agent policy (wikitech.wikimedia.org, meta.wikimedia.org) were unreachable from the dev environment; re-read them when possible. |
 
-## Exploited vulnerabilities — CISA KEV + NVD (v1.2, not built yet)
+## Exploited vulnerabilities — CISA KEV + NVD (v1.2, live)
 
-|                |                                                                                                        |
-| -------------- | ------------------------------------------------------------------------------------------------------ |
-| CISA KEV       | `https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json` — CC0            |
-| NVD API 2.0    | `https://services.nvd.nist.gov/rest/json/cves/2.0` — called only from the Worker with a secret API key |
-| Notice to show | **"This product uses the NVD API but is not endorsed or certified by the NVD."**                       |
-| Last checked   | ⚠️ to do before v1.2                                                                                   |
+|                         |                                                                                                                                                                                                                                                                                                                               |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CISA KEV                | `https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json`, with fallback to the official mirror `https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json`. License: CC0.                                                                                     |
+| NVD API 2.0             | `https://services.nvd.nist.gov/rest/json/cves/2.0`. Called **only from our Worker** (cron every 20 min); the optional API key is a Worker secret, never sent to browsers.                                                                                                                                                     |
+| Required / shown notice | **"This product uses the NVD API but is not endorsed or certified by the NVD."** (ticker, Sources dialog, README)                                                                                                                                                                                                             |
+| How we use it           | We show CVE ids, CVSS base scores and severities as NVD publishes them, and the first sentence of the English description (marked as an excerpt). KEV vendor, product, vulnerability name, date added, due date and ransomware flag are shown exactly as CISA gives them. Every item links to its NVD page.                   |
+| Rate limits             | One NVD request for new CVEs plus at most two CVE lookups per 20-minute run, well under NVD's limits (5 requests / 30 s without a key, 50 with one).                                                                                                                                                                          |
+| Last checked            | 2026-10-23: KEV mirror fetched live (catalog 2026.10.21). ⚠️ `www.cisa.gov` and `services.nvd.nist.gov` were unreachable from the dev environment; verified on the deployed Worker instead (see DECISIONS.md). Re-read the NVD terms of use (https://nvd.nist.gov/developers/terms-of-use) before relying on it commercially. |
 
 ## Fonts
 

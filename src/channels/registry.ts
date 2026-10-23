@@ -27,10 +27,8 @@ export const channels: ChannelEntry[] = [
     id: 'exploited',
     name: 'Exploited vulns',
     path: '/exploited',
-    status: 'soon',
-    release: 'v1.2',
-    blurb:
-      'Every new software vulnerability as it is published — and the ones attackers are known to be using right now, from the CISA KEV catalog and the NVD.',
+    status: 'live',
+    load: () => import('./exploited').then((m) => m.default),
   },
   {
     id: 'wikipedia',

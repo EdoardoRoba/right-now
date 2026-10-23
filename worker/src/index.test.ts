@@ -53,3 +53,18 @@ describe('worker', () => {
     expect((await call('api/usgs/all_day')).status).toBe(502);
   });
 });
+
+describe('entry module', () => {
+  it('exports only the handler (workerd rejects other named exports)', async () => {
+    const mod = await import('./index');
+    expect(Object.keys(mod)).toEqual(['default']);
+  });
+
+  it('cron constants match wrangler.jsonc', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { CRON_KEV, CRON_NVD } = await import('./crons');
+    const cfg = readFileSync(new URL('../../wrangler.jsonc', import.meta.url), 'utf8');
+    expect(cfg).toContain(`"${CRON_NVD}"`);
+    expect(cfg).toContain(`"${CRON_KEV}"`);
+  });
+});

@@ -106,11 +106,16 @@ export class Pulse {
     return el(
       'div',
       { class: 'pulse__hero pulse__hero--in' },
-      el('p', { class: 'pulse__number' }, c.value(ev)),
+      el(
+        'p',
+        { class: c.valueMuted?.(ev) ? 'pulse__number pulse__number--muted' : 'pulse__number' },
+        c.value(ev),
+      ),
       el(
         'div',
         { class: 'pulse__text' },
         el('h2', { class: 'pulse__title' }, ev.title),
+        ...(c.detail ? [el('p', { class: 'pulse__detail' }, c.detail(ev))] : []),
         el('p', { class: 'pulse__subtitle' }, c.subtitle(ev)),
       ),
     );
@@ -133,9 +138,13 @@ export class Pulse {
   private refresh(ev: LiveEvent): void {
     const current = this.stage.querySelector('.pulse__hero:not(.pulse__hero--out)');
     if (current) {
-      current.querySelector('.pulse__number')!.textContent = this.config.value(ev);
+      const number = current.querySelector('.pulse__number')!;
+      number.textContent = this.config.value(ev);
+      number.classList.toggle('pulse__number--muted', this.config.valueMuted?.(ev) ?? false);
       current.querySelector('.pulse__title')!.textContent = ev.title;
       current.querySelector('.pulse__subtitle')!.textContent = this.config.subtitle(ev);
+      const detail = current.querySelector('.pulse__detail');
+      if (detail && this.config.detail) detail.textContent = this.config.detail(ev);
     }
     this.applyMeta(ev);
   }
@@ -146,11 +155,12 @@ export class Pulse {
     if (this.fill && this.config.bar) this.fill.style.width = `${this.config.bar.pct(ev)}%`;
     const tags = this.config.tags?.(ev) ?? [];
     this.footer.replaceChildren(
-      ...tags.map((t) =>
-        t.href
-          ? externalLink(t.href, { class: 'tag' }, t.text)
-          : el('span', { class: 'tag' }, t.text),
-      ),
+      ...tags.map((t) => {
+        const cls = `tag tag--${t.tone ?? 'info'}`;
+        return t.href
+          ? externalLink(t.href, { class: cls }, t.text)
+          : el('span', { class: cls }, t.text);
+      }),
       ...(ev.url
         ? [externalLink(ev.url, { class: 'pulse__link' }, `${this.config.linkText} ↗`)]
         : []),

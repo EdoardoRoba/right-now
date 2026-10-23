@@ -129,6 +129,11 @@ export class River {
     if (channel.axis.bottomColor) axisBottom.style.color = channel.axis.bottomColor;
     if (channel.axis.centerLine)
       grid.push(el('div', { class: 'river__center', 'aria-hidden': 'true' }));
+    for (const y of channel.axis.guides ?? []) {
+      const g = el('div', { class: 'river__guide', 'aria-hidden': 'true' });
+      g.style.top = `${10 + y * 80}%`; // matches yToPx's 10% padding
+      grid.push(g);
+    }
     root.replaceChildren(
       ...grid,
       axisTop,
@@ -260,7 +265,8 @@ export class River {
       ctx.drawImage(this.sprite(ev.color), x - glowR, y - glowR, glowR * 2, glowR * 2);
       ctx.fillStyle = ev.color;
       ctx.beginPath();
-      ctx.arc(x, y, d / 2, 0, Math.PI * 2);
+      if (ev.shape === 'square') ctx.roundRect(x - d / 2, y - d / 2, d, d, Math.min(3, d / 4));
+      else ctx.arc(x, y, d / 2, 0, Math.PI * 2);
       ctx.fill();
 
       if (ev.important && !reduced) {
@@ -326,7 +332,7 @@ export class River {
         if (value) {
           ctx.font = valueFont;
           ctx.strokeText(value, valueX, y);
-          ctx.fillStyle = ev.color;
+          ctx.fillStyle = ev.labelColor ?? ev.color;
           ctx.fillText(value, valueX, y);
         }
         ctx.font = textFont;
