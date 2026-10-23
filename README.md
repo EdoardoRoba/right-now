@@ -29,7 +29,7 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 
 ## Run it
 
-Requires Node 20 or later.
+Requires Node 22.12 or later (`.nvmrc` pins 22).
 
 ```bash
 npm install

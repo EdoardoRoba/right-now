@@ -115,3 +115,8 @@ Lighthouse has not been run yet: it needs the deployed URL.
 - [ ] Deploy to Cloudflare Pages (needs the owner's Cloudflare account; see the README).
 - [ ] README screenshots and a GIF with real data; Lighthouse run on the deployed URL.
 - [ ] Choose a license for the code (none has been set yet).
+
+## Tooling upgrade (2026-10-23)
+
+- **Upgraded the dev tooling to Vite 8 and Vitest 5**: `npm audit` had flagged moderate/critical advisories in the old Vite 5 / Vitest 2 tool chain. The app ships zero runtime dependencies, so visitors were never exposed; this keeps the dev tooling clean. `npm audit` now reports 0.
+- **Node requirement raised from 20 to 22.12** (Vitest 5 needs it). `.nvmrc` pins 22 for Cloudflare's build image.
