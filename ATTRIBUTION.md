@@ -2,19 +2,25 @@
 
 Right Now shows only real, openly licensed data. Every event links to its official source page, and the required notices are always visible: in the ticker, in the **Sources** dialog, and here.
 
-> **Status of the terms check (2026-10-23):** the environment this project was bootstrapped in could not reach `usgs.gov` or `wikimedia.org` (outbound network policy). The notes below are based on the providers' long-standing published terms and **must be re-read against the live pages before launch**. Update the "Last checked" dates when you do.
+> **Status of the terms check (2026-10-23):**
+>
+> - USGS feed and feed documentation: verified live.
+> - USGS copyright page (`www.usgs.gov`): still unreachable from the dev environment.
+> - Wikimedia and CISA/NVD: to check before their channels ship.
+>
+> Update the "Last checked" dates when you re-read a page.
 
 ## Earthquakes — U.S. Geological Survey (v1, live)
 
-|                         |                                                                                                                                                                                                                                                                               |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Endpoints               | `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson` (polled every 60 s) · `…/all_day.geojson` (initial fill)                                                                                                                                         |
-| Docs                    | https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php                                                                                                                                                                                                                 |
-| License                 | U.S. public domain (works of the U.S. Government). USGS asks for credit.                                                                                                                                                                                                      |
-| Terms page              | https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits                                                                                                                                                                                             |
-| Required / shown notice | **"Data: U.S. Geological Survey"** (ticker, Sources dialog)                                                                                                                                                                                                                   |
-| How we use it           | Fetched directly by the visitor's browser (no server), at most once a minute, paused while the tab is hidden. Each event links to its USGS event page. We show magnitude, place, depth, time and the tsunami flag exactly as published; nothing is invented or editorialised. |
-| Last checked            | ⚠️ not yet verified live — see status above                                                                                                                                                                                                                                   |
+|                         |                                                                                                                                                                                                                                                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Endpoints               | `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson` (polled every 60 s) · `…/all_day.geojson` (initial fill)                                                                                                                                                                                        |
+| Docs                    | https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php                                                                                                                                                                                                                                                                |
+| License                 | U.S. public domain (works of the U.S. Government). USGS asks for credit.                                                                                                                                                                                                                                                     |
+| Terms page              | https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits                                                                                                                                                                                                                                            |
+| Required / shown notice | **"Data: U.S. Geological Survey"** (ticker, Sources dialog)                                                                                                                                                                                                                                                                  |
+| How we use it           | Fetched directly by the visitor's browser (no server), at most once a minute, paused while the tab is hidden. Each event links to its USGS event page. We show magnitude, place, depth, time and the tsunami flag exactly as published; nothing is invented or editorialised.                                                |
+| Last checked            | 2026-10-23: feed endpoints and the [feed docs](https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php) re-read ("GeoJSON is intended to be used as a programatic interface for applications"; follows the USGS Earthquakes Feed Life Cycle Policy). CORS `*`, `max-age=60`. ⚠️ Copyright/credit page not yet re-read. |
 
 ## Wikipedia pulse — Wikimedia EventStreams (v1.1, not built yet)
 

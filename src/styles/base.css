@@ -35,6 +35,11 @@ ul {
   list-style: none;
 }
 
+/* The hidden attribute must win over component display rules (e.g. .chip). */
+[hidden] {
+  display: none !important;
+}
+
 button {
   font: inherit;
   color: inherit;

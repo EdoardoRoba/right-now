@@ -52,14 +52,14 @@ A short log of the choices made and why. Newest sections are at the bottom.
 
 ## CORS / Worker
 
-- **Could not be tested yet**: `earthquake.usgs.gov` was blocked by this environment's network policy. USGS feeds are publicly documented for browser use and, to my knowledge, send `Access-Control-Allow-Origin: *`. **Decision: the frontend fetches USGS directly** (zero server cost).
-- **Fallback is ready**: the Worker implements `GET /api/usgs/:feed` (allow-list `all_hour`, `all_day`, Cache API 55 s, CORS `*`). If the CORS check fails, point `FEED_BASE` in `src/channels/earthquakes/source.ts` at the Worker and add its origin to the CSP `connect-src` in `public/_headers`.
-- `npm run record:fixtures` prints the `access-control-allow-origin` header it gets back. Run it once with network access to settle this.
+- **Verified on 2026-10-23**: the USGS feeds answer with `Access-Control-Allow-Origin: *`, `Cache-Control: public, max-age=60` and `Last-Modified` (no ETag), and are served via CloudFront. **Decision: the frontend fetches USGS directly** (zero server cost). `cache: 'no-cache'` lets the browser revalidate with `If-Modified-Since`.
+- **The fallback stays ready**: the Worker implements `GET /api/usgs/:feed` (allow-list `all_hour`, `all_day`, Cache API 55 s, CORS `*`). It is not needed today.
 - No cron in v1. v1.2 will use at most 2.
 
 ## Data & fixtures
 
-- **`synthetic-sample.geojson` is hand-written** (fictional "Testland" places) in the documented USGS format, because real responses could not be recorded here. It is used only by tests. `npm run record:fixtures` saves real responses, and the unit tests automatically run any `usgs-*.geojson` through the parser.
+- **Real recorded fixtures**: `usgs-all_hour-*.geojson` and `usgs-all_day-*.geojson` (2026-10-23, public domain) are run through the parser by the unit tests. The day feed held 267 events: 262 earthquakes, 3 quarry blasts, 2 explosions, 45 at M2.5+ (only 1 in the last hour), 4 with negative magnitudes, and depths from −2.25 to 236 km.
+- **`synthetic-sample.geojson` is hand-written** (fictional "Testland" places) to cover edge cases the real feed rarely has (null magnitude, tsunami flag, missing place, non-USGS URL). The e2e test uses it.
 - **The e2e test** intercepts the USGS URLs and serves the fixture with its timestamps shifted to "now".
 - **Demo mode** (`?demo=1`): real-time (no time-lapse), busier than reality, a "DEMO DATA" badge and ticker segment, `DEMO-2026-xxxxx` ids. The code is lazy-loaded, so production visitors never download it. `?dots=N` sets the starting count for performance tests.
 
@@ -96,17 +96,22 @@ Measured with headless Chromium (software rendering, 4 vCPU container, 1280×880
 - Fonts: about 82 KB for the Latin subsets actually used
 
 **Memory (soak test)**: headless Chromium ran `?demo=1&dots=1400` with the store at its 1,500-dot cap and new events arriving every 1–3 s. Heap after forced GC, sampled once a minute for 10 minutes: 10.0 MB every time, with no growth.
+
 - Caveat: Chromium's `performance.memory` is coarse (bucketed) without `--enable-precise-memory-info`, so this rules out a real leak but not drift under about 1 MB.
 - Still to do: a 30-minute DevTools check on the deployed site.
 
 Lighthouse has not been run yet: it needs the deployed URL.
 
+## Live check (2026-10-23)
+
+- **The production build on the live USGS feed** rendered correctly: Pulse "M3.4 · 70 km W of Ferndale, CA · 10 km deep · 27 min ago", 8 quakes in the river, and the earlier M4+ quakes in the side list.
+- **Bug found and fixed**: the "DEMO DATA" badge showed on real data, because `.chip { display: inline-flex }` beat the `hidden` attribute. A global `[hidden] { display: none !important }` fixes it, and the e2e test now asserts the badge is hidden outside demo mode.
+- **A real hour is quiet** (about 5–15 quakes worldwide, usually 0–2 at M2.5+). The river is sparse but honest. A possible later option is a longer window (e.g. 6 h); not done, because the brief asks for 60 min.
+- **Sandbox note**: in this sandbox, Chromium can't use the agent proxy, so the live check relayed the USGS responses through Node unchanged (same body and same CORS header).
+
 ## Open items
 
-- [ ] Allow `earthquake.usgs.gov` (and later `stream.wikimedia.org`) in the dev environment, or run locally:
-  - run `npm run record:fixtures`
-  - confirm CORS
-  - re-check the terms and update `ATTRIBUTION.md`
+- [ ] Allow `www.usgs.gov` in the dev environment to re-read the USGS copyright/credit page, then update `ATTRIBUTION.md`. The feed documentation was re-read on 2026-10-23.
 - [ ] Deploy to Cloudflare Pages (needs the owner's Cloudflare account; see the README).
 - [ ] README screenshots and a GIF with real data; Lighthouse run on the deployed URL.
 - [ ] Choose a license for the code (none has been set yet).

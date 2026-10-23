@@ -76,6 +76,10 @@ test.describe('earthquakes', () => {
       )
       .toBeGreaterThan(500);
 
+    // Real data is never labelled as demo data
+    await expect(page.locator('#demo-badge')).toBeHidden();
+    await expect(page.locator('#ticker')).not.toContainText('DEMO DATA');
+
     // Attribution is visible
     await expect(page.locator('#ticker')).toContainText('DATA: U.S. GEOLOGICAL SURVEY');
     expect(errors).toEqual([]);

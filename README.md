@@ -15,9 +15,9 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 | Wikipedia pulse | Wikimedia EventStreams               | v1.1 — coming soon |
 | Exploited vulns | CISA KEV + NVD API                   | v1.2 — coming soon |
 
-![Right Now — Earthquakes channel (demo data)](docs/screenshot-demo-desktop.png)
+![Right Now — Earthquakes channel, live USGS data](docs/screenshot-live-desktop.png)
 
-<sub>The screenshot uses `?demo=1` demo data (note the DEMO DATA badge). Without `?demo=1` the app shows only real USGS data.</sub>
+<sub>Live USGS data, 2026-10-23 06:05 UTC. A real hour is calm; the demo screenshot (`?demo=1`, badged) is in `docs/`.</sub>
 
 ## Reading the Earthquakes channel
 
