@@ -95,7 +95,11 @@ Measured with headless Chromium (software rendering, 4 vCPU container, 1280×880
 - CSS: 3.71 KB
 - Fonts: about 82 KB for the Latin subsets actually used
 
-**Memory**: see the "Soak test" entry below. Lighthouse has not been run yet: it needs the deployed URL.
+**Memory (soak test)**: headless Chromium ran `?demo=1&dots=1400` with the store at its 1,500-dot cap and new events arriving every 1–3 s. Heap after forced GC, sampled once a minute for 10 minutes: 10.0 MB every time, with no growth.
+- Caveat: Chromium's `performance.memory` is coarse (bucketed) without `--enable-precise-memory-info`, so this rules out a real leak but not drift under about 1 MB.
+- Still to do: a 30-minute DevTools check on the deployed site.
+
+Lighthouse has not been run yet: it needs the deployed URL.
 
 ## Open items
 
