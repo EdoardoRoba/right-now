@@ -45,20 +45,16 @@ npm run build          # → dist/
 ## Deploy in 5 minutes (Cloudflare, €0)
 
 1. Create a free Cloudflare account.
-2. **Pages:** go to _Workers & Pages → Create → Pages → Connect to Git_, pick this repo, and use:
-   - framework preset: _None_
-   - build command: `npm run build`
-   - output directory: `dist`
-   - environment variable `NODE_VERSION=20`
+2. Go to **Workers & Pages → Create → Import a repository**, pick this repo, and set:
+   - **Build command:** `npm run build`
+   - **Deploy command:** `npx wrangler deploy`
+   - leave everything else at its default
 
-   `public/_headers` (CSP, caching) is picked up automatically, and unknown paths fall back to `index.html` (SPA mode).
+   `wrangler.jsonc` makes the deploy upload `dist/` as static assets, with SPA fallback; `public/_headers` sets the CSP and caching. Static asset requests are free.
 
-3. **Worker** (optional in v1; it is only a CORS fallback for USGS):
-   ```bash
-   npx wrangler login
-   npm run worker:deploy
-   ```
-4. **v1.2 only:** run `npx wrangler secret put NVD_API_KEY --config worker/wrangler.toml`. The key lives only in Cloudflare; never put it in a file in this repo.
+3. Production deploys from the default branch (`main`). Other branches get preview URLs.
+4. **API Worker** (optional in v1; only a CORS fallback for USGS): `npm run worker:deploy`.
+5. **v1.2 only:** `npx wrangler secret put NVD_API_KEY --config worker/wrangler.toml`. The key lives only in Cloudflare; never put it in a file in this repo.
 
 ## Architecture
 
