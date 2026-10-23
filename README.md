@@ -19,7 +19,11 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 
 ![Right Now — Earthquakes channel, live USGS data](docs/screenshot-live-desktop.png)
 
-<sub>Live USGS data, 2026-10-23 06:05 UTC. A real hour is calm; the demo screenshot (`?demo=1`, badged) is in `docs/`.</sub>
+<sub>Live USGS data, 2026-10-23 06:05 UTC. A real hour is calm.</sub>
+
+![Motion: a new M2.5+ quake takes over the Pulse (demo data)](docs/demo.gif)
+
+<sub>Motion preview recorded with `?demo=1`, which is busier than reality and labelled DEMO DATA. The live site shows only real USGS data.</sub>
 
 ## Reading the Earthquakes channel
 

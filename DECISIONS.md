@@ -19,7 +19,7 @@ A short log of the choices made and why. Newest sections are at the bottom.
 - Reduced motion and mobile layouts
 - Unit tests + e2e smoke test with fixtures
 - ✅ Deployed on Cloudflare Workers (static assets), live at https://right-now.rn-earth.workers.dev, with live-data screenshots in the README
-- ⏳ README GIF
+- ✅ README GIF (`docs/demo.gif`, recorded in badged demo mode, because a real hour moves too slowly to show in a few seconds)
 
 **M2 — Wikipedia pulse (v1.1)**: `src/channels/wikipedia/` with an EventSource source, surge detector (+ recorded fixture), and a CSP `connect-src` entry.
 **M3 — Exploited (v1.2)**: Worker cron (KEV + NVD) → `/api/exploited`, `src/channels/exploited/`.
@@ -101,7 +101,11 @@ Measured with headless Chromium (software rendering, 4 vCPU container, 1280×880
 - Caveat: Chromium's `performance.memory` is coarse (bucketed) without `--enable-precise-memory-info`, so this rules out a real leak but not drift under about 1 MB.
 - Still to do: a 30-minute DevTools check on the deployed site.
 
-Lighthouse has not been run yet: it needs the deployed URL.
+**Lighthouse (mobile, live URL, 2026-10-23)**: Performance 98, Accessibility 96, Best Practices 100, SEO 91. LCP 1.7 s, FCP 1.1 s, TBT 150 ms, CLS 0.006.
+
+- Fixed after that run:
+  - The fading side list dropped the small "ago" text below 4.5:1 contrast. Rows now fade by blending the name toward `--faint` and dimming only the large value (kept ≥ 3:1). Accessibility re-ran at 100 locally with a full list.
+  - Added `robots.txt` (the SPA fallback was answering it with HTML).
 
 ## Live check (2026-10-23)
 
