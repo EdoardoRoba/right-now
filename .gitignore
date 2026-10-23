@@ -1,0 +1,36 @@
+# Dependencies & build output
+node_modules/
+dist/
+.vite/
+coverage/
+
+# Test output
+test-results/
+playwright-report/
+blob-report/
+
+# Cloudflare / Wrangler local state
+.wrangler/
+.dev.vars
+.dev.vars.*
+
+# Secrets — never commit any of these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.crt
+secrets/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+
+# Local scratch scripts
+*.tmp.mjs

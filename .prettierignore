@@ -1,0 +1,7 @@
+dist
+node_modules
+mockups
+public/fonts
+package-lock.json
+src/channels/*/fixtures
+.wrangler
