@@ -14,7 +14,9 @@ import {
   editToEvent,
   formatBytes,
   parseChange,
+  current,
   startWikipedia,
+  STALE_RESET_AFTER,
   type RawChange,
 } from './source';
 
@@ -227,15 +229,52 @@ describe('startWikipedia (EventSource lifecycle)', () => {
     t += 5_000;
     await vi.advanceTimersByTimeAsync(2_100);
     expect(FakeES.all).toHaveLength(2);
-    expect(FakeES.all[1]!.url).toBe(`${STREAM_URL}?since=${Date.parse('2026-10-23T07:00:09Z')}`);
+    expect(FakeES.all[1]!.url).toBe(`${STREAM_URL}?since=2026-10-23T07%3A00%3A09.000Z`);
 
     // a long outage never replays more than 30 s
     FakeES.all[1]!.readyState = 2;
     FakeES.all[1]!.onerror!();
     t += 10 * 60_000;
     await vi.advanceTimersByTimeAsync(5_000);
-    expect(FakeES.all[2]!.url).toBe(`${STREAM_URL}?since=${t - 30_000}`);
+    expect(FakeES.all[2]!.url).toBe(
+      `${STREAM_URL}?since=${encodeURIComponent(new Date(t - 30_000).toISOString())}`,
+    );
     stop();
     expect(FakeES.all[2]!.readyState).toBe(2);
+  });
+
+  it('never draws or counts a replay of old history, and reconnects fresh', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('document', { hidden: false, addEventListener() {}, removeEventListener() {} });
+    const t = Date.parse('2026-10-23T08:44:50Z');
+    const store = new EventStore({ windowMs: 60_000 });
+    const freshness = new Freshness(5_000, t);
+    const stop = startWikipedia(
+      { store, freshness },
+      {
+        EventSourceImpl: FakeES as unknown as typeof EventSource,
+        now: () => t,
+        retainSurgesMs: 3_600_000,
+      },
+    );
+    // 9-day-old edits arriving at full speed (what a numeric ?since= caused)
+    for (let i = 0; i < STALE_RESET_AFTER; i++) {
+      FakeES.all[0]!.onmessage!({
+        data: JSON.stringify(
+          edit({
+            user: `u${i}`,
+            title: 'Old',
+            meta: { id: `old${i}`, dt: '2026-10-14T10:15:00Z' },
+          }),
+        ),
+      });
+    }
+    await vi.advanceTimersByTimeAsync(300);
+    expect(store.size).toBe(0);
+    expect(current!.editsPerSecond(t)).toBe(0);
+    expect(freshness.state(t)).toBe('reconnecting');
+    expect(FakeES.all[0]!.readyState).toBe(2); // dropped
+    expect(FakeES.all[1]!.url).toBe(STREAM_URL); // fresh, live position
+    stop();
   });
 });
