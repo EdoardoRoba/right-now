@@ -11,11 +11,11 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 - **Side list:** earlier notable events plus two live stats.
 - **Ticker:** the channel's tagline and its data attribution.
 
-| Channel         | Source                               | Status             |
-| --------------- | ------------------------------------ | ------------------ |
-| Earthquakes     | USGS real-time feeds (public domain) | **v1 — live**      |
-| Wikipedia pulse | Wikimedia EventStreams               | v1.1 — coming soon |
-| Exploited vulns | CISA KEV + NVD API                   | v1.2 — coming soon |
+| Channel         | Source                                    | Status             |
+| --------------- | ----------------------------------------- | ------------------ |
+| Earthquakes     | USGS real-time feeds (public domain)      | **v1 — live**      |
+| Wikipedia pulse | Wikimedia EventStreams (CC BY-SA content) | **v1.1 — live**    |
+| Exploited vulns | CISA KEV + NVD API                        | v1.2 — coming soon |
 
 ![Right Now — Earthquakes channel, live USGS data](docs/screenshot-live-desktop.png)
 
@@ -32,6 +32,14 @@ Each channel shows one thing happening on Earth in real time, using only open, o
 - **Dot size and colour:** magnitude. Blue is below M3, amber is M3–4.9, orange is M5 and above.
 - **Important quakes:** every M2.5+ quake gets a ring and a label, and the newest becomes the Pulse. If the last hour was quiet, the Pulse shows the latest M2.5+ from the past day, with an honest "2 h ago".
 - **More detail:** hover or tap a dot for details and a link to the USGS event page.
+
+## Reading the Wikipedia pulse
+
+- **Left → right:** the last 60 seconds, at real speed. Every dot is one edit to a Wikipedia article, in any language.
+- **Above the line:** text added. **Below the line:** text removed. Distance from the line is the size of the change, on a log scale. Grey dots are bots.
+- **The Pulse:** a **surge**, meaning at least 15 edits by at least 5 different people to one article within 10 minutes. That usually means something just happened in the world. Between surges, the Pulse shows the **most-edited article** of the last 10 minutes, labelled as such.
+- **Privacy:** usernames and IP addresses are never shown or stored.
+- **Bandwidth:** your browser streams about 3 MB per minute from Wikimedia and disconnects while the tab is hidden.
 
 ## Run it
 

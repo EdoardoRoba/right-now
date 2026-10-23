@@ -36,10 +36,8 @@ export const channels: ChannelEntry[] = [
     id: 'wikipedia',
     name: 'Wikipedia pulse',
     path: '/wikipedia',
-    status: 'soon',
-    release: 'v1.1',
-    blurb:
-      'Every edit to Wikipedia as it happens, and the articles the whole world suddenly starts editing at once.',
+    status: 'live',
+    load: () => import('./wikipedia').then((m) => m.default),
   },
 ];
 

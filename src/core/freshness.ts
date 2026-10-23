@@ -3,11 +3,13 @@
  * label and the "Data delayed" badge (no success for > 3× the poll interval).
  */
 
-export type FreshnessState = 'connecting' | 'live' | 'delayed';
+export type FreshnessState = 'connecting' | 'live' | 'reconnecting' | 'delayed';
 
 export class Freshness {
   lastSuccess: number | null = null;
   lastError: number | null = null;
+  /** Set by streaming sources while they re-establish a dropped connection. */
+  reconnecting = false;
   private listeners = new Set<() => void>();
 
   constructor(
@@ -17,6 +19,13 @@ export class Freshness {
 
   markSuccess(now: number): void {
     this.lastSuccess = now;
+    this.reconnecting = false;
+    this.emit();
+  }
+
+  markReconnecting(): void {
+    if (this.reconnecting) return;
+    this.reconnecting = true;
     this.emit();
   }
 
@@ -27,6 +36,8 @@ export class Freshness {
 
   state(now: number): FreshnessState {
     const limit = this.intervalMs * 3;
+    const stale = this.lastSuccess === null || now - this.lastSuccess > limit;
+    if (this.reconnecting) return stale && this.lastSuccess !== null ? 'delayed' : 'reconnecting';
     if (this.lastSuccess === null) return now - this.startedAt > limit ? 'delayed' : 'connecting';
     return now - this.lastSuccess > limit ? 'delayed' : 'live';
   }

@@ -196,6 +196,39 @@
   color: var(--muted);
 }
 
+/* Inline layout (Wikipedia): the number sits beside the title. */
+.pulse--inline .pulse__hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0 28px;
+}
+.pulse--inline .pulse__text {
+  min-width: 0;
+  max-width: 520px;
+  padding-bottom: 14px;
+}
+.pulse--inline .pulse__title {
+  font-size: 34px;
+  line-height: 1.1;
+}
+.pulse--inline .pulse__subtitle {
+  margin-top: 10px;
+}
+.pulse--inline .pulse__ring {
+  left: 120px;
+  top: 50%;
+}
+
+.pulse__note {
+  position: relative;
+  max-width: 520px;
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 .pulse__empty {
   font-size: 30px;
   font-weight: 500;
@@ -399,6 +432,15 @@ a.tag:hover {
   bottom: 8px;
 }
 
+.river__center {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid var(--line);
+  pointer-events: none;
+}
+
 .river__now {
   position: absolute;
   top: 0;
@@ -593,8 +635,12 @@ a.tag:hover {
   .pulse__number {
     font-size: clamp(88px, 22vw, 168px);
   }
-  .pulse__title {
+  .pulse__title,
+  .pulse--inline .pulse__title {
     font-size: 24px;
+  }
+  .pulse--inline .pulse__text {
+    padding-bottom: 0;
   }
   /* Only the 3 most recent earlier events. */
   .side__list li:nth-child(n + 4) {

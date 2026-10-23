@@ -93,7 +93,7 @@ export class River {
   private summaryTimer: ReturnType<typeof setInterval>;
   private bornAt = new Map<string, number>();
   private sprites = new Map<string, HTMLCanvasElement>();
-  private labelWidths = new Map<string, [number, number]>();
+  private labelWidths = new Map<string, [number, number, number]>();
   private drawn: Drawn[] = [];
   private pinned: LiveEvent | null = null;
   private resize: ResizeObserver;
@@ -118,14 +118,21 @@ export class River {
       g.style.left = `${left}%`;
       return g;
     });
+    const axisTop = el('div', { class: 'river__axis river__axis--top', 'aria-hidden': 'true' });
+    const axisBottom = el('div', {
+      class: 'river__axis river__axis--bottom',
+      'aria-hidden': 'true',
+    });
+    axisTop.textContent = channel.axis.top;
+    axisBottom.textContent = channel.axis.bottom;
+    if (channel.axis.topColor) axisTop.style.color = channel.axis.topColor;
+    if (channel.axis.bottomColor) axisBottom.style.color = channel.axis.bottomColor;
+    if (channel.axis.centerLine)
+      grid.push(el('div', { class: 'river__center', 'aria-hidden': 'true' }));
     root.replaceChildren(
       ...grid,
-      el('div', { class: 'river__axis river__axis--top', 'aria-hidden': 'true' }, channel.axis.top),
-      el(
-        'div',
-        { class: 'river__axis river__axis--bottom', 'aria-hidden': 'true' },
-        channel.axis.bottom,
-      ),
+      axisTop,
+      axisBottom,
       this.canvas,
       el('div', { class: 'river__now', 'aria-hidden': 'true' }),
       el('div', { class: 'river__now-label', 'aria-hidden': 'true' }, 'NOW'),
@@ -275,48 +282,58 @@ export class River {
     this.drawn = drawn;
   }
 
-  /** Labels for important dots, newest first; a label that would overlap a newer one is skipped. */
+  /**
+   * Labels, newest first: important dots get first pick of the space, then
+   * dots the channel flags with `showLabel`. A label that would overlap one
+   * already placed is skipped.
+   */
   private drawLabels(drawn: Drawn[], now: number, windowMs: number): void {
     const { ctx, width: w } = this;
     const placed: Rect[] = [];
     const valueFont = `500 ${LABEL_FONT_SIZE}px ${fonts.mono}`;
     const textFont = `400 ${LABEL_FONT_SIZE}px ${fonts.display}`;
+    const valueLast = this.channel.labelOrder === 'value-last';
     ctx.textBaseline = 'middle';
 
-    for (let i = drawn.length - 1; i >= 0; i--) {
-      const { ev, x, y, r } = drawn[i]!;
-      if (!ev.important || !ev.label) continue;
-      const value = ev.labelValue ?? '';
-      let widths = this.labelWidths.get(ev.id);
-      if (!widths) {
-        ctx.font = valueFont;
-        const vw = value ? ctx.measureText(value + ' ').width : 0;
-        ctx.font = textFont;
-        widths = [vw, ctx.measureText(ev.label).width];
-        this.labelWidths.set(ev.id, widths);
-      }
-      const total = widths[0] + widths[1];
-      let lx = x + r + 10;
-      if (lx + total > w - 12) lx = x - r - 10 - total; // flip left near the NOW line
-      const rect = { x: lx - 4, y: y - 10, w: total + 8, h: 20 };
-      if (lx < 0 || placed.some((p) => overlaps(p, rect))) continue;
-      placed.push(rect);
+    for (const pass of [true, false]) {
+      for (let i = drawn.length - 1; i >= 0; i--) {
+        const { ev, x, y, r } = drawn[i]!;
+        if (!ev.label || ev.important !== pass || (!pass && !ev.showLabel)) continue;
+        const value = ev.labelValue ?? '';
+        let widths = this.labelWidths.get(ev.id);
+        if (!widths) {
+          ctx.font = valueFont;
+          const vw = value ? ctx.measureText(value).width : 0;
+          ctx.font = textFont;
+          widths = [vw, ctx.measureText(ev.label).width, ctx.measureText(' ').width];
+          this.labelWidths.set(ev.id, widths);
+        }
+        const [vw, tw, space] = widths;
+        const total = vw + tw + (value ? space : 0);
+        let lx = x + r + 10;
+        if (lx + total > w - 12) lx = x - r - 10 - total; // flip left near the NOW line
+        const rect = { x: lx - 4, y: y - 10, w: total + 8, h: 20 };
+        if (lx < 0 || placed.some((p) => overlaps(p, rect))) continue;
+        placed.push(rect);
 
-      ctx.globalAlpha = fadeForAge(now - ev.time, windowMs);
-      // A thin background-coloured halo keeps labels legible over other dots.
-      ctx.lineWidth = 3;
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = palette.bg;
-      if (value) {
-        ctx.font = valueFont;
-        ctx.strokeText(value, lx, y);
-        ctx.fillStyle = ev.color;
-        ctx.fillText(value, lx, y);
+        const valueX = valueLast ? lx + tw + space : lx;
+        const textX = valueLast || !value ? lx : lx + vw + space;
+        ctx.globalAlpha = fadeForAge(now - ev.time, windowMs);
+        // A thin background-coloured halo keeps labels legible over other dots.
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = palette.bg;
+        if (value) {
+          ctx.font = valueFont;
+          ctx.strokeText(value, valueX, y);
+          ctx.fillStyle = ev.color;
+          ctx.fillText(value, valueX, y);
+        }
+        ctx.font = textFont;
+        ctx.strokeText(ev.label, textX, y);
+        ctx.fillStyle = palette.text;
+        ctx.fillText(ev.label, textX, y);
       }
-      ctx.font = textFont;
-      ctx.strokeText(ev.label, lx + widths[0], y);
-      ctx.fillStyle = palette.text;
-      ctx.fillText(ev.label, lx + widths[0], y);
     }
   }
 
