@@ -1,0 +1,117 @@
+/* ==========================================================================
+   Layout — app frame, header, hero row, river frame, ticker bar, responsive.
+   ========================================================================== */
+
+/* ---- App frame: one viewport-high screen on desktop, no page scroll ---- */
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* shockwave rings may grow past their section */
+}
+
+@media (min-width: 641px) and (min-height: 700px) {
+  .app {
+    height: 100dvh;
+  }
+}
+
+/* ---- Header ---- */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+  padding: 24px var(--gutter) 0;
+}
+
+.header__status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+/* ---- Channel view: hero row + river + ticks ---- */
+.view {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.hero-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 20px var(--gutter) 0;
+}
+
+.hero-row > .pulse {
+  flex: 999 1 560px;
+  min-width: 0;
+}
+
+.hero-row > .side {
+  flex: 1 1 300px;
+  min-width: 0;
+}
+
+.river-wrap {
+  flex: 1 1 auto;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  margin: 32px var(--gutter) 0;
+}
+
+/* ---- Ticker bar (bottom) ---- */
+.ticker-bar {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+}
+
+/* ---- Phones (≤ 640px) ---- */
+@media (max-width: 640px) {
+  :root {
+    --gutter: 16px;
+  }
+
+  .header {
+    gap: 12px 16px;
+    padding-top: 16px;
+  }
+
+  /* Clock moves under the wordmark; pills get their own scrolling row. */
+  .header__status {
+    order: 2;
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .header .channels {
+    order: 3;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: calc(100% + 2 * var(--gutter));
+    margin: 0 calc(-1 * var(--gutter));
+    padding: 2px var(--gutter) 6px;
+    scrollbar-width: none;
+  }
+  .header .channels::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero-row {
+    gap: 24px;
+    padding-top: 16px;
+  }
+
+  .river-wrap {
+    flex: 0 0 auto;
+    margin-top: 28px;
+  }
+}

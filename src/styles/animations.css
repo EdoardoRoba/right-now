@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Animations — every @keyframes lives here, plus the reduced-motion overrides.
+   (Canvas motion — dot pop-in, rings, drift — is in src/core/river.ts.)
+   ========================================================================== */
+
+/* Live dot + NOW label: opacity .35 ↔ 1 */
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* New hero slides up out of a blur */
+@keyframes hero-in {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.94);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Old hero blurs away */
+@keyframes hero-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-24px) scale(1.03);
+    filter: blur(10px);
+  }
+}
+
+/* Shockwave ring behind the hero number */
+@keyframes shockwave {
+  0% {
+    transform: scale(0.2);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Ticker: content is duplicated, so -50% loops seamlessly */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.live-dot,
+.river__now-label {
+  animation: breathe var(--dur-breathe) ease-in-out infinite;
+}
+
+.pulse__hero--in {
+  animation: hero-in var(--dur-hero-in) var(--ease-out-expo) both;
+}
+
+.pulse__hero--out {
+  animation: hero-out 0.5s var(--ease-out-expo) both;
+}
+
+.pulse__ring--go {
+  animation: shockwave var(--dur-shock) linear both;
+}
+.pulse__ring--go:nth-child(2) {
+  animation-delay: 0.35s;
+}
+.pulse__ring--go:nth-child(3) {
+  animation-delay: 0.7s;
+}
+
+.ticker__track {
+  animation: marquee var(--dur-marquee) linear infinite;
+}
+
+/* Pause CSS loops while the tab is hidden (class set from main.ts). */
+.is-hidden * {
+  animation-play-state: paused !important;
+}
+
+/* ---- Reduced motion: no rings, no blur, no marquee ---- */
+@media (prefers-reduced-motion: reduce) {
+  .live-dot,
+  .river__now-label {
+    animation: none;
+    opacity: 1;
+  }
+  .pulse__hero--in,
+  .pulse__hero--out {
+    animation: none;
+  }
+  .pulse__hero--out {
+    display: none;
+  }
+  .pulse__ring {
+    display: none;
+  }
+  .pulse__fill {
+    transition: none;
+  }
+  .ticker__track {
+    animation: none;
+    width: auto;
+    white-space: normal;
+    padding: 0 var(--gutter);
+  }
+  .ticker__group[aria-hidden='true'],
+  .ticker__rep + .ticker__rep {
+    display: none;
+  }
+}

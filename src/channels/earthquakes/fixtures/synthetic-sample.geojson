@@ -1,0 +1,541 @@
+{
+ "type": "FeatureCollection",
+ "metadata": {
+  "generated": 1761200000000,
+  "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson",
+  "title": "SYNTHETIC TEST FIXTURE \u2014 not real data",
+  "status": 200,
+  "api": "1.14.1",
+  "count": 13
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 1.2,
+    "place": "12 km N of Exampletown, Testland",
+    "time": 1761199940000,
+    "updated": 1761200000000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0001",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0001.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0001",
+    "ids": ",xx0001,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 1.2 - 12 km N of Exampletown, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     8.2
+    ]
+   },
+   "id": "xx0001"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 4.6,
+    "place": "Offshore Test Region A",
+    "time": 1761199820000,
+    "updated": 1761199880000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0002",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0002.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0002",
+    "ids": ",xx0002,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 4.6 - Offshore Test Region A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     12.0
+    ]
+   },
+   "id": "xx0002"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 2.47,
+    "place": "5 km E of Sampleville, Testland",
+    "time": 1761199700000,
+    "updated": 1761199760000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0003",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0003.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0003",
+    "ids": ",xx0003,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 2.47 - 5 km E of Sampleville, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     3.1
+    ]
+   },
+   "id": "xx0003"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 2.44,
+    "place": "7 km W of Sampleville, Testland",
+    "time": 1761199580000,
+    "updated": 1761199640000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0004",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0004.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0004",
+    "ids": ",xx0004,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 2.44 - 7 km W of Sampleville, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     2.0
+    ]
+   },
+   "id": "xx0004"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": -0.4,
+    "place": "2 km S of Mockford, Testland",
+    "time": 1761199460000,
+    "updated": 1761199520000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0005",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0005.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0005",
+    "ids": ",xx0005,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M -0.4 - 2 km S of Mockford, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     0.5
+    ]
+   },
+   "id": "xx0005"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 1.9,
+    "place": "Test Quarry, Testland",
+    "time": 1761199340000,
+    "updated": 1761199400000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0006",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0006.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0006",
+    "ids": ",xx0006,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "quarry blast",
+    "title": "M 1.9 - Test Quarry, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     0.0
+    ]
+   },
+   "id": "xx0006"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": null,
+    "place": "Unknown magnitude event, Testland",
+    "time": 1761199220000,
+    "updated": 1761199280000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0007",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0007.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0007",
+    "ids": ",xx0007,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M ? - Unknown magnitude event, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     5.0
+    ]
+   },
+   "id": "xx0007"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 6.3,
+    "place": "Deep Test Trench Region B",
+    "time": 1761198800000,
+    "updated": 1761198860000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0008",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0008.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 1,
+    "sig": 0,
+    "net": "xx",
+    "code": "0008",
+    "ids": ",xx0008,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 6.3 - Deep Test Trench Region B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     612.4
+    ]
+   },
+   "id": "xx0008"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 3.1,
+    "place": null,
+    "time": 1761198500000,
+    "updated": 1761198560000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0009",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0009.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0009",
+    "ids": ",xx0009,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 3.1 - Test Basin Region D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     33.0
+    ]
+   },
+   "id": "xx0009"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 0.8,
+    "place": "1 km N of Mockford, Testland",
+    "time": 1761198200000,
+    "updated": 1761198260000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0010",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0010.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0010",
+    "ids": ",xx0010,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 0.8 - 1 km N of Mockford, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     null
+    ]
+   },
+   "id": "xx0010"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 2.9,
+    "place": "9 km NE of Exampletown, Testland",
+    "time": 1761197300000,
+    "updated": 1761197360000,
+    "tz": null,
+    "url": "https://evil.example.com/x",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0011.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0011",
+    "ids": ",xx0011,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 2.9 - 9 km NE of Exampletown, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     -1.2
+    ]
+   },
+   "id": "xx0011"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 5.2,
+    "place": "Test Ridge Region C",
+    "time": 1761192800000,
+    "updated": 1761192860000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0012",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0012.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0012",
+    "ids": ",xx0012,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 5.2 - Test Ridge Region C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     10.0
+    ]
+   },
+   "id": "xx0012"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 1.1,
+    "place": "3 km SW of Exampletown, Testland",
+    "time": 1761196520000,
+    "updated": 1761196580000,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/xx0013",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/xx0013.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "xx",
+    "code": "0013",
+    "ids": ",xx0013,",
+    "sources": ",xx,",
+    "types": ",origin,phase-data,",
+    "nst": 10,
+    "dmin": 0.1,
+    "rms": 0.2,
+    "gap": 80,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 1.1 - 3 km SW of Exampletown, Testland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.0,
+     35.0,
+     4.4
+    ]
+   },
+   "id": "xx0013"
+  }
+ ],
+ "bbox": [
+  -180,
+  -90,
+  -10,
+  180,
+  90,
+  700
+ ]
+}
